@@ -1,0 +1,65 @@
+package net.chuzarski.moviebucket.network;
+
+import net.chuzarski.moviebucket.BuildConfig;
+
+import java.io.IOException;
+
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by cody on 3/21/18.
+ */
+
+public class MovieNetworkServiceFactory {
+
+    public static final String urlBase = "https://api.themoviedb.org/3/";
+
+    /**
+     * Creates a MovieNetworkService that returns deserialized POJO objects
+     * @return MovieNetworkService Retrofit instance
+     */
+    public static MovieNetworkService getInstance() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(urlBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getCustomHttpClient())
+                .build();
+
+        return retrofit.create(MovieNetworkService.class);
+    }
+
+    /**
+     * This method builds an OkHttpClient that will automatically apply the API key to each request
+     * This is to simplify the MovieNetworkService
+     * Thank you https://futurestud.io/tutorials/retrofit-2-how-to-add-query-parameters-to-every-request
+     * @return Custom OkHttpClient
+     */
+    private static OkHttpClient getCustomHttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+                        HttpUrl originalUrl = original.url();
+
+                        HttpUrl url = originalUrl.newBuilder()
+                                .addQueryParameter("api_key", BuildConfig.TMDBAPIKEY)
+                                .addQueryParameter("dummy_param", "YouShouldSeeThis")
+                                .build();
+
+                        Request request = original.newBuilder()
+                                .url(url)
+                                .build();
+
+                        return chain.proceed(request);
+                    }
+                })
+                .build();
+    }
+}

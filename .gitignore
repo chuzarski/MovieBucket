@@ -124,6 +124,7 @@ freeline_project_description.json
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
+gradle.properties
 
 # CMake
 cmake-build-debug/
