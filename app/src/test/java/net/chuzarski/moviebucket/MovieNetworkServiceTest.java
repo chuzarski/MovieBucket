@@ -2,7 +2,7 @@ package net.chuzarski.moviebucket;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
-import net.chuzarski.moviebucket.network.models.DiscoverResponseModel;
+import net.chuzarski.moviebucket.network.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.models.MovieModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
 
@@ -64,9 +64,9 @@ public class MovieNetworkServiceTest {
         String releaseFrom = "2018-03-23";
         String releaseTo = "2018-03-30";
 
-        Response<DiscoverResponseModel> response = null;
-        DiscoverResponseModel model;
-        Call<DiscoverResponseModel> call = service.getUpcomingMovies(releaseFrom, releaseTo, language, region);
+        Response<DiscoverModel> response = null;
+        DiscoverModel model;
+        Call<DiscoverModel> call = service.getUpcomingMovies(releaseFrom, releaseTo, language, region, 1);
 
         int numberResults;
 

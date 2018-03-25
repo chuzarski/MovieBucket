@@ -8,7 +8,7 @@ import java.util.List;
  * Created by cody on 3/21/18.
  */
 
-public class DiscoverResponseModel {
+public class DiscoverModel {
 
     @SerializedName("page")
     private int page;

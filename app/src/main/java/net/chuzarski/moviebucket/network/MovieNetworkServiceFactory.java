@@ -1,9 +1,12 @@
 package net.chuzarski.moviebucket.network;
 
+import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.BuildConfig;
 
 import java.io.IOException;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import okhttp3.Dispatcher;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;

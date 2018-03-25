@@ -1,6 +1,6 @@
 package net.chuzarski.moviebucket.network;
 
-import net.chuzarski.moviebucket.network.models.DiscoverResponseModel;
+import net.chuzarski.moviebucket.network.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.models.MovieModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
 
@@ -25,10 +25,11 @@ public interface MovieNetworkService {
     Call<MovieModel> getMovieById(@Path("id") int id);
 
     @GET("discover/movie?sort_by=primary_release_date.asc&language=en-US&with_release_type=2%7C3")
-    Call<DiscoverResponseModel> getUpcomingMovies(@Query("primary_release_date.gte") String releaseDateRangeFrom,
-                                                  @Query("primary_release_date.lte") String releaseDateRangeTo,
-                                                  @Query("with_original_language") String language,
-                                                  @Query("region") String region);
+    Call<DiscoverModel> getUpcomingMovies(@Query("primary_release_date.gte") String releaseDateRangeFrom,
+                                          @Query("primary_release_date.lte") String releaseDateRangeTo,
+                                          @Query("with_original_language") String language,
+                                          @Query("region") String region,
+                                          @Query("page") int page);
 
     @GET("configuration")
     Call<ServiceConfigurationModel> getServiceConfiguration();
