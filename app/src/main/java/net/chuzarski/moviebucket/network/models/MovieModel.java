@@ -34,6 +34,9 @@ public class MovieModel {
     @ColumnInfo(name = "poster_path")
     private String posterUrl;
 
+    @SerializedName("backdrop_path")
+    private String backdropPath;
+
     @SerializedName("release_date")
     @ColumnInfo(name = "release_date")
     private String releaseDate;
@@ -84,5 +87,13 @@ public class MovieModel {
 
     public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 }

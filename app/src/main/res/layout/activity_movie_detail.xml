@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.chuzarski.moviebucket.ui.MovieDetailActivity">
+    tools:context="net.chuzarski.moviebucket.ui.moviedetail.MovieDetailActivity">
 
 
-    <fragment
-        android:name="net.chuzarski.moviebucket.ui.MovieDetailFragment"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/activity_fragment_movie_detail"

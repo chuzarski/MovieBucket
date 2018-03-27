@@ -30,7 +30,7 @@ public class MovieNetworkServiceTest {
 
     @Before
     public void setup() {
-        service = MovieNetworkServiceFactory.getInstance();
+        service = MovieNetworkServiceFactory.create();
     }
 
     @Test

@@ -27,7 +27,7 @@ public class MovieNetworkServiceFactory {
      * Creates a MovieNetworkService that returns deserialized POJO objects
      * @return MovieNetworkService Retrofit instance
      */
-    public static MovieNetworkService getInstance() {
+    public static MovieNetworkService create() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(urlBase)
                 .addConverterFactory(GsonConverterFactory.create())

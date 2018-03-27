@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.ui;
+package net.chuzarski.moviebucket.ui.moviedetail;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -11,8 +11,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.util.MovieImagePathHelper;
 import net.chuzarski.moviebucket.viewmodels.MovieDetailViewModel;
+
+import timber.log.Timber;
 
 public class MovieDetailFragment extends Fragment {
 
@@ -27,9 +33,21 @@ public class MovieDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static MovieDetailFragment newInstance(int movieId) {
+        Bundle args = new Bundle();
+        args.putInt("MOVIE_ID", movieId);
+
+        MovieDetailFragment fragment = new MovieDetailFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
     }
 
     @Override
@@ -49,9 +67,6 @@ public class MovieDetailFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-
-        viewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
-
     }
 
     @Override
@@ -63,9 +78,15 @@ public class MovieDetailFragment extends Fragment {
         movieTitleTextView = getView().findViewById(R.id.movie_detail_title);
         movieSummaryTextView = getView().findViewById(R.id.movie_detail_summary);
 
+        viewModel.setMovieId(getArguments().getInt("MOVIE_ID")); // TODO We blindly make the assumption that this value is in the bundle. This cannot be.);
 
         viewModel.getMovieModel().observe(this, model -> {
-            // change in MovieModel i.e. it finally arrived from the internet. Time to update.
+            movieTitleTextView.setText(model.getTitle());
+            movieSummaryTextView.setText(model.getOverview());
+
+            Glide.with(this)
+                    .load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()))
+                    .into(movieHeadingImageView);
         });
     }
 
@@ -75,16 +96,6 @@ public class MovieDetailFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface MovieDetailInteractor {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
