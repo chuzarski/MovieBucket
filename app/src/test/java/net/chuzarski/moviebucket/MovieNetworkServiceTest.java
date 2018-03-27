@@ -2,8 +2,9 @@ package net.chuzarski.moviebucket;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
+import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.network.models.DiscoverModel;
-import net.chuzarski.moviebucket.network.models.MovieModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
 
 import org.junit.Before;
@@ -30,7 +31,7 @@ public class MovieNetworkServiceTest {
 
     @Before
     public void setup() {
-        service = MovieNetworkServiceFactory.create();
+        service = MovieNetworkServiceFactory.getInstance();
     }
 
     @Test
@@ -39,9 +40,9 @@ public class MovieNetworkServiceTest {
         String targetTitle = "Logan";
         String targetReleaseDate = "2017-02-28";
 
-        Response<MovieModel> response = null;
-        Call<MovieModel> call = service.getMovieById(targetId);
-        MovieModel model;
+        Response<DetailedMovieModel> response = null;
+        Call<DetailedMovieModel> call = service.getMovieDetail(targetId);
+        DetailedMovieModel model;
 
         try {
             response = call.execute();
@@ -55,6 +56,35 @@ public class MovieNetworkServiceTest {
         assertThat(model.getTitle()).isEqualTo(targetTitle);
         assertThat(model.getReleaseDate()).isEqualTo(targetReleaseDate);
 
+    }
+
+    @Test
+    public void validateUpcomingDiscoverFetchWithParams() {
+        UpcomingMoviesParams requestParams;
+
+        Response<DiscoverModel> response = null;
+        DiscoverModel model;
+        Call<DiscoverModel> call;
+        int numResults;
+
+        requestParams = new UpcomingMoviesParams.Builder("2018-03-23", "2018-03-30").build();
+
+        call = service.getUpcomingMovies(requestParams.getReleaseDateRangeFrom(),
+                requestParams.getReleaseDateRangeTo(),
+                requestParams.getLanguage(),
+                requestParams.getRegion(),
+                1);
+
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertThat(response.isSuccessful()).isTrue();
+        model = response.body();
+        assertThat(model).isNotNull();
+        assertThat(model.getMovieListing()).isNotEmpty();
     }
 
     @Test
@@ -84,7 +114,7 @@ public class MovieNetworkServiceTest {
 
         numberResults = model.getNumResults();
 
-        assertThat(model.getMovies()).hasSize(numberResults);
+        assertThat(model.getMovieListing()).hasSize(numberResults);
 
     }
 

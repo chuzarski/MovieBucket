@@ -22,19 +22,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MovieNetworkServiceFactory {
 
     public static final String urlBase = "https://api.themoviedb.org/3/";
+    private static MovieNetworkService instance;
 
     /**
      * Creates a MovieNetworkService that returns deserialized POJO objects
      * @return MovieNetworkService Retrofit instance
      */
-    public static MovieNetworkService create() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(urlBase)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getCustomHttpClient())
-                .build();
+    public static MovieNetworkService getInstance() {
+        if (instance == null) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(urlBase)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getCustomHttpClient())
+                    .build();
+            instance = retrofit.create(MovieNetworkService.class);
+        }
 
-        return retrofit.create(MovieNetworkService.class);
+        return instance;
     }
 
     /**
@@ -53,7 +57,6 @@ public class MovieNetworkServiceFactory {
 
                         HttpUrl url = originalUrl.newBuilder()
                                 .addQueryParameter("api_key", BuildConfig.TMDBAPIKEY)
-                                .addQueryParameter("dummy_param", "YouShouldSeeThis")
                                 .build();
 
                         Request request = original.newBuilder()

@@ -20,9 +20,6 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         setContentView(R.layout.activity_movie_detail);
         fragmentFrame = findViewById(R.id.activity_fragment_movie_detail);
 
-        if(savedInstanceState != null)
-            return;
-
         initFragment();
     }
 

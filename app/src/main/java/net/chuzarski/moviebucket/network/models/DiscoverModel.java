@@ -20,7 +20,7 @@ public class DiscoverModel {
     private int numResults;
 
     @SerializedName("results")
-    private List<MovieModel> movies;
+    private List<MovieListingItemModel> movieListing;
 
     public int getPage() {
         return page;
@@ -46,11 +46,11 @@ public class DiscoverModel {
         this.numResults = numResults;
     }
 
-    public List<MovieModel> getMovies() {
-        return movies;
+    public List<MovieListingItemModel> getMovieListing() {
+        return movieListing;
     }
 
-    public void setMovies(List<MovieModel> movies) {
-        this.movies = movies;
+    public void setMovieListing(List<MovieListingItemModel> movieListing) {
+        this.movieListing = movieListing;
     }
 }

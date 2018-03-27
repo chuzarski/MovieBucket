@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
-    tools:context="net.chuzarski.moviebucket.ui.moviedetail.MovieDetailActivity">
+    tools:context="net.chuzarski.moviebucket.ui.movieroll.MovieRollActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/activity_fragment_movie_detail"
-        />
+        android:id="@+id/activity_movie_roll_fragment_frame"/>
 </FrameLayout>

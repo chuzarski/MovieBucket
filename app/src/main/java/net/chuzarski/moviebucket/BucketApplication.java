@@ -13,7 +13,7 @@ import timber.log.Timber;
 
 public class BucketApplication extends Application {
 
-    private static Executor generalExecutor;
+    private static Executor networkExecutor;
 
     @Override
     public void onCreate() {
@@ -26,10 +26,10 @@ public class BucketApplication extends Application {
         Timber.tag("Application");
         Timber.d("We have logging");
 
-        generalExecutor = Executors.newFixedThreadPool(3); // Magic number that might be controlled by something else
+        networkExecutor = Executors.newFixedThreadPool(3); // Magic number that might be controlled by something else
     }
 
-    public static Executor getGeneralExecutor() {
-        return generalExecutor;
+    public static Executor getNetworkExecutor() {
+        return networkExecutor;
     }
 }

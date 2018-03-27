@@ -1,7 +1,7 @@
 package net.chuzarski.moviebucket.network;
 
 import net.chuzarski.moviebucket.network.models.DiscoverModel;
-import net.chuzarski.moviebucket.network.models.MovieModel;
+import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
 
 import retrofit2.Call;
@@ -18,11 +18,11 @@ public interface MovieNetworkService {
 
     /**
      * Fetches individual movie from TMDB
-     * @param id Movie ID
+     * @param movieId
      * @return
      */
     @GET("movie/{id}")
-    Call<MovieModel> getMovieById(@Path("id") int id);
+    Call<DetailedMovieModel> getMovieDetail(@Path("id") int movieId);
 
     @GET("discover/movie?sort_by=primary_release_date.asc&language=en-US&with_release_type=2%7C3")
     Call<DiscoverModel> getUpcomingMovies(@Query("primary_release_date.gte") String releaseDateRangeFrom,

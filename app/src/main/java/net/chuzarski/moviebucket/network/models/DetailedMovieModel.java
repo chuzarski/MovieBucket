@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 @Entity
-public class MovieModel {
+public class DetailedMovieModel {
 
     @SerializedName("id")
     @PrimaryKey
@@ -40,6 +40,8 @@ public class MovieModel {
     @SerializedName("release_date")
     @ColumnInfo(name = "release_date")
     private String releaseDate;
+
+    
 
     public int getId() {
         return id;
