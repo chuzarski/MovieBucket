@@ -1,5 +1,7 @@
 package net.chuzarski.moviebucket.network;
 
+import com.google.gson.Gson;
+
 import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.BuildConfig;
 

@@ -9,16 +9,21 @@ import android.widget.FrameLayout;
 
 import net.chuzarski.moviebucket.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity implements MovieDetailFragment.MovieDetailInteractor {
 
     private MovieDetailFragment fragment;
-    private FrameLayout fragmentFrame;
+
+    @BindView(R.id.activity_fragment_movie_detail)
+    public FrameLayout fragmentFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-        fragmentFrame = findViewById(R.id.activity_fragment_movie_detail);
+        ButterKnife.bind(this);
 
         initFragment();
     }
@@ -36,7 +41,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     }
 
     private void initFragment() {
-        fragment = MovieDetailFragment.newInstance(263115);
+        fragment = MovieDetailFragment.newInstance(198663);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_fragment_movie_detail, fragment).commit();
     }
 }

@@ -1,5 +1,6 @@
 package net.chuzarski.moviebucket.network;
 
+import net.chuzarski.moviebucket.network.models.CollectionModel;
 import net.chuzarski.moviebucket.network.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
@@ -21,7 +22,7 @@ public interface MovieNetworkService {
      * @param movieId
      * @return
      */
-    @GET("movie/{id}")
+    @GET("movie/{id}?append_to_response=videos")
     Call<DetailedMovieModel> getMovieDetail(@Path("id") int movieId);
 
     @GET("discover/movie?sort_by=primary_release_date.asc&language=en-US&with_release_type=2%7C3")
@@ -33,5 +34,8 @@ public interface MovieNetworkService {
 
     @GET("configuration")
     Call<ServiceConfigurationModel> getServiceConfiguration();
+
+    @GET("collection/{id}")
+    Call<CollectionModel> getCollection(@Path("id") int collectionId);
 
 }

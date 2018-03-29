@@ -16,17 +16,25 @@ import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
 import net.chuzarski.moviebucket.viewmodels.MovieRollViewModel;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 
 public class MovieRollFragment extends Fragment {
 
 
     private MovieRollFragmentInteractor mListener;
+    private Unbinder unbinder;
+
 
     private MovieRollViewModel viewModel;
-    private RecyclerView movieRecyclerView;
     private MovieRollPagedListAdapter adapter;
     private LinearLayoutManager layoutManager;
+
+    // UI elements
+    @BindView(R.id.fragment_movie_roll_recylerview)
+    public RecyclerView movieRecyclerView;
 
     public MovieRollFragment() {
         // Required empty public constructor
@@ -60,15 +68,15 @@ public class MovieRollFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_roll, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_roll, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Safe spot to add UI references
-        movieRecyclerView = getView().findViewById(R.id.fragment_movie_roll_recylerview);
+
         adapter = new MovieRollPagedListAdapter();
         layoutManager = new LinearLayoutManager(getContext());
 
@@ -82,6 +90,12 @@ public class MovieRollFragment extends Fragment {
         viewModel.getMovieList().observe(this, list -> {
             adapter.submitList(list);
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override

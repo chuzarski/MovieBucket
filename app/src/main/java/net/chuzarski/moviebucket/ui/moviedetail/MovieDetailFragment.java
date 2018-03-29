@@ -8,16 +8,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.util.MovieImagePathHelper;
 import net.chuzarski.moviebucket.viewmodels.MovieDetailViewModel;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import timber.log.Timber;
 
 public class MovieDetailFragment extends Fragment {
@@ -25,9 +31,20 @@ public class MovieDetailFragment extends Fragment {
     private MovieDetailInteractor mListener;
     private MovieDetailViewModel viewModel;
 
-    private ImageView movieHeadingImageView;
-    private TextView movieTitleTextView;
-    private TextView movieSummaryTextView;
+    @BindView(R.id.movie_detail_fragment_heading_image)
+    public ImageView movieHeadingImageView;
+
+    @BindView(R.id.movie_detail_fragment_title)
+    public TextView movieTitleTextView;
+
+    @BindView(R.id.movie_detail_fragment_summary)
+    public TextView movieSummaryTextView;
+
+    @BindView(R.id.movie_detail_fragment_layout_trailer)
+    public LinearLayout trailerGroupLayout;
+
+    private Unbinder unbinder;
+
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -53,8 +70,9 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
 
@@ -73,21 +91,31 @@ public class MovieDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // references to UI
-        movieHeadingImageView = getView().findViewById(R.id.movie_detail_heading_image);
-        movieTitleTextView = getView().findViewById(R.id.movie_detail_title);
-        movieSummaryTextView = getView().findViewById(R.id.movie_detail_summary);
-
-        viewModel.setMovieId(getArguments().getInt("MOVIE_ID")); // TODO We blindly make the assumption that this value is in the bundle. This cannot be.);
-
-        viewModel.getMovieModel().observe(this, model -> {
+        viewModel.getMovieModel(getArguments().getInt("MOVIE_ID")).observe(this, model -> { // TODO We blindly make the assumption that this value is in the bundle. This cannot be.);
             movieTitleTextView.setText(model.getTitle());
             movieSummaryTextView.setText(model.getOverview());
 
             Glide.with(this)
                     .load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()))
                     .into(movieHeadingImageView);
+
+            if(model.getVideoListing() != null) {
+                trailerGroupLayout.setVisibility(View.VISIBLE);
+                for (DetailedMovieModel.VideoModel video : model.getVideoListing().getVideos()) {
+                    if (video.getSite().equals("YouTube")) {
+                        trailerGroupLayout.addView(createTrailerViewButton());
+                    }
+                }
+            }
         });
+
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -99,5 +127,16 @@ public class MovieDetailFragment extends Fragment {
     public interface MovieDetailInteractor {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private Button createTrailerViewButton() {
+        Button viewButton = new Button(getView().getContext());
+        viewButton.setLayoutParams(
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT)
+        );
+        viewButton.setText("View Trailer on YouTube");
+
+        return viewButton;
     }
 }

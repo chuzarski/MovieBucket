@@ -29,39 +29,19 @@ public class MovieListingItemModel {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getReleaseDate() {
         return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getPosterImagePath() {
         return posterImagePath;
     }
 
-    public void setPosterImagePath(String posterImagePath) {
-        this.posterImagePath = posterImagePath;
-    }
-
     public boolean isAdult() {
         return adult;
-    }
-
-    public void setAdult(boolean adult) {
-        this.adult = adult;
     }
 }

@@ -37,24 +37,12 @@ public class ServiceConfigurationModel {
             return baseUrl;
         }
 
-        public void setBaseUrl(String baseUrl) {
-            this.baseUrl = baseUrl;
-        }
-
         public List<String> getPosterSizes() {
             return posterSizes;
         }
 
-        public void setPosterSizes(List<String> posterSizes) {
-            this.posterSizes = posterSizes;
-        }
-
         public List<String> getBackdropSizes() {
             return backdropSizes;
-        }
-
-        public void setBackdropSizes(List<String> backdropSizes) {
-            this.backdropSizes = backdropSizes;
         }
     }
 

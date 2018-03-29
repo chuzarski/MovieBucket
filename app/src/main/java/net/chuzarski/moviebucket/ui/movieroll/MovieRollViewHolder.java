@@ -12,20 +12,26 @@ import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
 import net.chuzarski.moviebucket.util.MovieImagePathHelper;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by cody on 3/21/18.
  */
 
 public class MovieRollViewHolder extends RecyclerView.ViewHolder {
 
-    private TextView title;
-    private ImageView poster;
+    @BindView(R.id.movie_item_title)
+    public TextView title;
+
+    @BindView(R.id.movie_poster_image)
+    public ImageView poster;
+
     private RequestManager glideRequestManager;
 
     public MovieRollViewHolder(View itemView) {
         super(itemView);
-        title = itemView.findViewById(R.id.movie_item_title);
-        poster = itemView.findViewById(R.id.movie_poster_image);
+        ButterKnife.bind(this, itemView);
         glideRequestManager = Glide.with(itemView);
     }
 

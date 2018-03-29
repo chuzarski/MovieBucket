@@ -2,7 +2,6 @@ package net.chuzarski.moviebucket.ui.movieroll;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
 import net.chuzarski.moviebucket.R;
 
@@ -10,7 +9,6 @@ import timber.log.Timber;
 
 public class MovieRollActivity extends AppCompatActivity implements MovieRollFragment.MovieRollFragmentInteractor {
 
-    FrameLayout fragmentFrame;
     MovieRollFragment fragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,6 +3,7 @@ package net.chuzarski.moviebucket;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.network.models.CollectionModel;
 import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.network.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
@@ -36,9 +37,9 @@ public class MovieNetworkServiceTest {
 
     @Test
     public void validateSimpleMovieFetch() {
-        int targetId = 263115;
-        String targetTitle = "Logan";
-        String targetReleaseDate = "2017-02-28";
+        int targetId = 338970;
+        String targetTitle = "Tomb Raider";
+        String targetReleaseDate = "2018-03-08";
 
         Response<DetailedMovieModel> response = null;
         Call<DetailedMovieModel> call = service.getMovieDetail(targetId);
@@ -55,7 +56,6 @@ public class MovieNetworkServiceTest {
         model = response.body();
         assertThat(model.getTitle()).isEqualTo(targetTitle);
         assertThat(model.getReleaseDate()).isEqualTo(targetReleaseDate);
-
     }
 
     @Test
@@ -140,6 +140,51 @@ public class MovieNetworkServiceTest {
         assertThat(model.getImageConfigurations().getBaseUrl()).isNotBlank();
         assertThat(model.getImageConfigurations().getPosterSizes()).contains("original");
         assertThat(model.getImageConfigurations().getBackdropSizes()).contains("original");
+    }
+
+    @Test
+    public void fullMovieDetailTest() {
+        int targetId = 198663;
+        String targetTitle = "The Maze Runner";
+        String targetCollectionName = "The Maze Runner Collection";
+
+        Response<DetailedMovieModel> response = null;
+        Call<DetailedMovieModel> call = service.getMovieDetail(targetId);
+        DetailedMovieModel model;
+
+        Response<CollectionModel> collectionResponse = null;
+        Call<CollectionModel> collectionCall;
+        CollectionModel collectionModel;
+
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertThat(response.isSuccessful()).isTrue();
+
+        model = response.body();
+        assertThat(model.getTitle()).isEqualTo(targetTitle);
+
+        assertThat(model.getVideoListing().getVideos()).isNotEmpty();
+
+        // cool lets get the collection
+        collectionCall = service.getCollection(model.getCollection().getId());
+
+        try {
+            collectionResponse = collectionCall.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertThat(collectionResponse.isSuccessful());
+
+        collectionModel = collectionResponse.body();
+
+        assertThat(collectionModel).isNotNull();
+
+        assertThat(collectionModel.getName()).isEqualTo(targetCollectionName);
     }
 
 }

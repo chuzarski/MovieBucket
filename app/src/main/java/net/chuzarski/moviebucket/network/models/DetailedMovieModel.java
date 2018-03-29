@@ -4,7 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -41,61 +47,99 @@ public class DetailedMovieModel {
     @ColumnInfo(name = "release_date")
     private String releaseDate;
 
+    @SerializedName("videos")
+    private VideoListingModel videoListing;
+
+    @SerializedName("belongs_to_collection")
+    private CollectionBelongModel collection;
+
     
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public boolean isAdult() {
         return isAdult;
-    }
-
-    public void setAdult(boolean adult) {
-        isAdult = adult;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getOverview() {
         return overview;
-    }
-
-    public void setOverview(String overview) {
-        this.overview = overview;
     }
 
     public String getPosterUrl() {
         return posterUrl;
     }
 
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
-    }
-
     public String getReleaseDate() {
         return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
     }
 
     public String getBackdropPath() {
         return backdropPath;
     }
 
-    public void setBackdropPath(String backdropPath) {
-        this.backdropPath = backdropPath;
+    public VideoListingModel getVideoListing() { return videoListing; }
+
+    public CollectionBelongModel getCollection() {
+        return collection;
+    }
+
+    public class VideoListingModel {
+        @SerializedName("results")
+        List<VideoModel> videos;
+
+        public List<VideoModel> getVideos() {
+            return videos;
+        }
+
+        public void setVideos(List<VideoModel> videos) {
+            this.videos = videos;
+        }
+    }
+    public class VideoModel {
+
+        @SerializedName("key")
+        private String videoKey;
+        @SerializedName("site")
+        private String site;
+        @SerializedName("type")
+        private String type;
+        @SerializedName("name")
+        private String name;
+
+        public String getVideoKey() {
+            return videoKey;
+        }
+        public String getSite() {
+            return site;
+        }
+        public String getType() {
+            return type;
+        }
+        public String getName() {
+            return name;
+        }
+
+    }
+
+    public class CollectionBelongModel {
+        @SerializedName("id")
+        private int id;
+
+        @SerializedName("name")
+        private String name;
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }
