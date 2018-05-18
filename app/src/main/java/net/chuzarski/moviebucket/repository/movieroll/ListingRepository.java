@@ -16,12 +16,12 @@ import net.chuzarski.moviebucket.models.MovieListingItemModel;
  * Created by cody on 3/27/18.
  */
 
-public class MovieRollRepository {
+public class ListingRepository {
 
     private MutableLiveData<NetworkState> networkState;
     private MovieNetworkService networkService;
 
-    public MovieRollRepository() {
+    public ListingRepository() {
         networkState = new MutableLiveData<>();
         networkState.postValue(NetworkState.LOADING);
 
@@ -33,10 +33,10 @@ public class MovieRollRepository {
     }
 
     public LiveData<PagedList<MovieListingItemModel>> getMovieListing(UpcomingMoviesParams requestParams) {
-        MovieRollDataSourceFactory factory;
+        ListingDataSourceFactory factory;
         DataSource<Integer, MovieListingItemModel> ds;
 
-        factory = new MovieRollDataSourceFactory(networkService, requestParams);
+        factory = new ListingDataSourceFactory(networkService, requestParams);
 
         return new LivePagedListBuilder(factory, 1).build();
     }

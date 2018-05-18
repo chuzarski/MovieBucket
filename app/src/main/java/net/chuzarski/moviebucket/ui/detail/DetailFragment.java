@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.ui.moviedetail;
+package net.chuzarski.moviebucket.ui.detail;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -18,16 +18,16 @@ import com.bumptech.glide.Glide;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.common.MovieImagePathHelper;
-import net.chuzarski.moviebucket.viewmodels.MovieDetailViewModel;
+import net.chuzarski.moviebucket.viewmodels.DetailViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MovieDetailFragment extends Fragment {
+public class DetailFragment extends Fragment {
 
     private MovieDetailInteractor mListener;
-    private MovieDetailViewModel viewModel;
+    private DetailViewModel viewModel;
 
     @BindView(R.id.movie_detail_fragment_heading_image)
     public ImageView movieHeadingImageView;
@@ -44,15 +44,15 @@ public class MovieDetailFragment extends Fragment {
     private Unbinder unbinder;
 
 
-    public MovieDetailFragment() {
+    public DetailFragment() {
         // Required empty public constructor
     }
 
-    public static MovieDetailFragment newInstance(int movieId) {
+    public static DetailFragment newInstance(int movieId) {
         Bundle args = new Bundle();
         args.putInt("MOVIE_ID", movieId);
 
-        MovieDetailFragment fragment = new MovieDetailFragment();
+        DetailFragment fragment = new DetailFragment();
         fragment.setArguments(args);
 
         return fragment;
@@ -62,7 +62,7 @@ public class MovieDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = ViewModelProviders.of(this).get(MovieDetailViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
     }
 
     @Override

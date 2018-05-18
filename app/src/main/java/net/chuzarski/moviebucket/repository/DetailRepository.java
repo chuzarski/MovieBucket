@@ -13,13 +13,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class MovieDetailRepository {
+public class DetailRepository {
 
     private MovieNetworkService movieNetworkService;
     private MutableLiveData<NetworkState> networkState;
 
-    public MovieDetailRepository() {
-        Timber.tag("MovieDetailRepository");
+    public DetailRepository() {
+        Timber.tag("DetailRepository");
         movieNetworkService = MovieNetworkServiceFactory.getInstance();
         networkState = new MutableLiveData<>();
         networkState.postValue(NetworkState.FRESH);

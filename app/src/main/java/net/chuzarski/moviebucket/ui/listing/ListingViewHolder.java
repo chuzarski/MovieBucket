@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.ui.movieroll;
+package net.chuzarski.moviebucket.ui.listing;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
  * Created by cody on 3/21/18.
  */
 
-public class MovieRollViewHolder extends RecyclerView.ViewHolder {
+public class ListingViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.movie_item_title)
     public TextView title;
@@ -29,7 +29,7 @@ public class MovieRollViewHolder extends RecyclerView.ViewHolder {
 
     private RequestManager glideRequestManager;
 
-    public MovieRollViewHolder(View itemView) {
+    public ListingViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         glideRequestManager = Glide.with(itemView);

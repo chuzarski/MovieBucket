@@ -17,15 +17,15 @@ import timber.log.Timber;
  * Created by cody on 3/27/18.
  */
 
-public class MovieRollDataSource extends PageKeyedDataSource<Integer, MovieListingItemModel>  {
+public class ListingDataSource extends PageKeyedDataSource<Integer, MovieListingItemModel>  {
 
     private MovieNetworkService service;
     private UpcomingMoviesParams requestParams;
 
-    public MovieRollDataSource(MovieNetworkService service, UpcomingMoviesParams requestParams) {
+    public ListingDataSource(MovieNetworkService service, UpcomingMoviesParams requestParams) {
         this.service = service;
         this.requestParams = requestParams;
-        Timber.tag("MovieRollDataSource");
+        Timber.tag("ListingDataSource");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MovieRollDataSource extends PageKeyedDataSource<Integer, MovieListi
             public void onResponse(Call<DiscoverModel> call, Response<DiscoverModel> response) {
                 DiscoverModel responseModel = response.body();
                 // figure out some stuff here
-                // TODO Refactor initial load for MovieRollDataSource
+                // TODO Refactor initial load for ListingDataSource
                 callback.onResult(responseModel.getMovieListing(), null, (responseModel.getPage() + 1));
             }
 
@@ -68,8 +68,8 @@ public class MovieRollDataSource extends PageKeyedDataSource<Integer, MovieListi
             public void onResponse(Call<DiscoverModel> call, Response<DiscoverModel> response) {
                 DiscoverModel responseModel = response.body();
                 // figure out some stuff here
-                // TODO Refactor additional load for MovieRollDataSource
-                Timber.d("Saying hello from MovieRollDataSource, we got some data");
+                // TODO Refactor additional load for ListingDataSource
+                Timber.d("Saying hello from ListingDataSource, we got some data");
                 callback.onResult(responseModel.getMovieListing(), (responseModel.getPage() + 1));
             }
 

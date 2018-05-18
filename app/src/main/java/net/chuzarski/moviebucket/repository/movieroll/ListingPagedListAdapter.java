@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.models.MovieListingItemModel;
-import net.chuzarski.moviebucket.ui.movieroll.MovieRollViewHolder;
+import net.chuzarski.moviebucket.ui.listing.ListingViewHolder;
 
 /**
  * Created by cody on 3/23/18.
  */
 
-public class MovieRollPagedListAdapter extends PagedListAdapter<MovieListingItemModel, MovieRollViewHolder> {
+public class ListingPagedListAdapter extends PagedListAdapter<MovieListingItemModel, ListingViewHolder> {
 
     public static final DiffUtil.ItemCallback<MovieListingItemModel> diffCallback = new DiffUtil.ItemCallback<MovieListingItemModel>() {
 
@@ -30,19 +30,19 @@ public class MovieRollPagedListAdapter extends PagedListAdapter<MovieListingItem
         }
     };
 
-    protected MovieRollPagedListAdapter() {
+    protected ListingPagedListAdapter() {
         super(diffCallback);
     }
 
     @NonNull
     @Override
-    public MovieRollViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item_view, parent, false);
-        return new MovieRollViewHolder(view);
+        return new ListingViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieRollViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListingViewHolder holder, int position) {
         holder.bind(getItem(position));
     }
 }

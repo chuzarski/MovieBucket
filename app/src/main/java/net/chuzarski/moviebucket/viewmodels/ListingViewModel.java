@@ -6,21 +6,21 @@ import android.arch.paging.PagedList;
 
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
 import net.chuzarski.moviebucket.models.MovieListingItemModel;
-import net.chuzarski.moviebucket.repository.movieroll.MovieRollRepository;
+import net.chuzarski.moviebucket.repository.movieroll.ListingRepository;
 
 /**
  * Created by cody on 3/21/18.
  */
 
-public class MovieRollViewModel extends ViewModel {
+public class ListingViewModel extends ViewModel {
 
     private LiveData<PagedList<MovieListingItemModel>> movieList;
-    private MovieRollRepository repo;
+    private ListingRepository repo;
     private UpcomingMoviesParams requestParams;
 
 
-    public MovieRollViewModel() {
-        repo = new MovieRollRepository();
+    public ListingViewModel() {
+        repo = new ListingRepository();
     }
 
     public void setRequestParams(UpcomingMoviesParams request) {

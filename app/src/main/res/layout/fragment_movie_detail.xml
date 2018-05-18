@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".ui.movieroll.MovieRollActivity">
+        tools:context=".ui.listing.ListingActivity">
 
         <RelativeLayout
             android:id="@+id/movie_detail_layout_group_1"

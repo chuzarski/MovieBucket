@@ -7,7 +7,7 @@
 
     <!-- General Strings -->
     <string name="movie_bucket_add_action_string">Add to Movie Bucket</string>
-    <!-- MovieDetailFragment Strings -->
+    <!-- DetailFragment Strings -->
     <string name="movie_detail_trailer_heading_string">Trailers</string>
     <string name="movie_detail_backdrop_content_description_string">Movie Poster</string>
     <string name="movie_detail_series_heading_string">Series</string>

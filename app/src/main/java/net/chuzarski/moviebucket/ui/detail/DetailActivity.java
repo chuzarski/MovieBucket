@@ -1,8 +1,6 @@
-package net.chuzarski.moviebucket.ui.moviedetail;
+package net.chuzarski.moviebucket.ui.detail;
 
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
@@ -12,9 +10,9 @@ import net.chuzarski.moviebucket.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieDetailActivity extends AppCompatActivity implements MovieDetailFragment.MovieDetailInteractor {
+public class DetailActivity extends AppCompatActivity implements DetailFragment.MovieDetailInteractor {
 
-    private MovieDetailFragment fragment;
+    private DetailFragment fragment;
 
     @BindView(R.id.activity_fragment_movie_detail)
     public FrameLayout fragmentFrame;
@@ -41,7 +39,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     }
 
     private void initFragment() {
-        fragment = MovieDetailFragment.newInstance(198663);
+        fragment = DetailFragment.newInstance(198663);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_fragment_movie_detail, fragment).commit();
     }
 }

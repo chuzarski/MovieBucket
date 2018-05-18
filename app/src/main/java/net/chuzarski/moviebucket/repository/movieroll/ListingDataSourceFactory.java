@@ -12,25 +12,25 @@ import net.chuzarski.moviebucket.models.MovieListingItemModel;
  * Created by cody on 3/27/18.
  */
 
-public class MovieRollDataSourceFactory extends DataSource.Factory<Integer, MovieListingItemModel> {
+public class ListingDataSourceFactory extends DataSource.Factory<Integer, MovieListingItemModel> {
 
     private MovieNetworkService networkService;
     private UpcomingMoviesParams requestParams;
-    private MutableLiveData<MovieRollDataSource> source;
+    private MutableLiveData<ListingDataSource> source;
 
-    public MovieRollDataSourceFactory(MovieNetworkService service, UpcomingMoviesParams requestParams) {
+    public ListingDataSourceFactory(MovieNetworkService service, UpcomingMoviesParams requestParams) {
         networkService = service;
         this.requestParams = requestParams;
         source = new MutableLiveData<>();
     }
     @Override
     public DataSource<Integer, MovieListingItemModel> create() {
-        MovieRollDataSource ds = new MovieRollDataSource(networkService, requestParams);
+        ListingDataSource ds = new ListingDataSource(networkService, requestParams);
         source.postValue(ds);
         return ds;
     }
 
-    public LiveData<MovieRollDataSource> getDataSource() {
+    public LiveData<ListingDataSource> getDataSource() {
         return source;
     }
 }
