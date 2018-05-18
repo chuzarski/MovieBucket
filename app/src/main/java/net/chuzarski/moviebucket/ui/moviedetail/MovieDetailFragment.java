@@ -14,17 +14,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
-import net.chuzarski.moviebucket.util.MovieImagePathHelper;
+import net.chuzarski.moviebucket.models.DetailedMovieModel;
+import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 import net.chuzarski.moviebucket.viewmodels.MovieDetailViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import timber.log.Timber;
 
 public class MovieDetailFragment extends Fragment {
 

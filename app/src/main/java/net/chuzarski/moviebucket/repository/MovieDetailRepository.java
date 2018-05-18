@@ -6,7 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
 import net.chuzarski.moviebucket.network.NetworkState;
-import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
+import net.chuzarski.moviebucket.models.DetailedMovieModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -6,7 +6,7 @@ import android.arch.paging.DataSource;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
-import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.models.MovieListingItemModel;
 
 /**
  * Created by cody on 3/27/18.

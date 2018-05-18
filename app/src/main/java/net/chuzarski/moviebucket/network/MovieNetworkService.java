@@ -1,9 +1,9 @@
 package net.chuzarski.moviebucket.network;
 
-import net.chuzarski.moviebucket.network.models.CollectionModel;
-import net.chuzarski.moviebucket.network.models.DiscoverModel;
-import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
-import net.chuzarski.moviebucket.network.models.ServiceConfigurationModel;
+import net.chuzarski.moviebucket.models.CollectionModel;
+import net.chuzarski.moviebucket.models.DiscoverModel;
+import net.chuzarski.moviebucket.models.DetailedMovieModel;
+import net.chuzarski.moviebucket.models.ServiceConfigurationModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

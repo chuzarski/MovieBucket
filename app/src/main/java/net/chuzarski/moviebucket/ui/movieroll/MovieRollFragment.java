@@ -2,7 +2,6 @@ package net.chuzarski.moviebucket.ui.movieroll;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +13,7 @@ import android.view.ViewGroup;
 
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.repository.movieroll.MovieRollPagedListAdapter;
 import net.chuzarski.moviebucket.viewmodels.MovieRollViewModel;
 
 import butterknife.BindView;

@@ -1,14 +1,12 @@
 package net.chuzarski.moviebucket.repository.movieroll;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
-import net.chuzarski.moviebucket.network.NetworkState;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
-import net.chuzarski.moviebucket.network.models.DiscoverModel;
-import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.models.DiscoverModel;
+import net.chuzarski.moviebucket.models.MovieListingItemModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.ui.movieroll;
+package net.chuzarski.moviebucket.repository.movieroll;
 
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.ui.movieroll.MovieRollViewHolder;
 
 /**
  * Created by cody on 3/23/18.

@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.network.models;
+package net.chuzarski.moviebucket.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

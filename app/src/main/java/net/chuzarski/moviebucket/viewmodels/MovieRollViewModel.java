@@ -2,13 +2,10 @@ package net.chuzarski.moviebucket.viewmodels;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
-import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
 
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
-import net.chuzarski.moviebucket.network.models.DetailedMovieModel;
-import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
-import net.chuzarski.moviebucket.repository.movieroll.MovieRollDataSourceFactory;
+import net.chuzarski.moviebucket.models.MovieListingItemModel;
 import net.chuzarski.moviebucket.repository.movieroll.MovieRollRepository;
 
 /**

@@ -9,8 +9,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.network.models.MovieListingItemModel;
-import net.chuzarski.moviebucket.util.MovieImagePathHelper;
+import net.chuzarski.moviebucket.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

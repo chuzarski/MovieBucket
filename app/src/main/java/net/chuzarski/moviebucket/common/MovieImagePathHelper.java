@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.util;
+package net.chuzarski.moviebucket.common;
 
 /**
  * Created by cody on 3/26/18.
