@@ -29,16 +29,16 @@ public class DetailFragment extends Fragment {
     private MovieDetailInteractor mListener;
     private DetailViewModel viewModel;
 
-    @BindView(R.id.movie_detail_fragment_heading_image)
+    @BindView(R.id.movie_detail_heading_imageview)
     public ImageView movieHeadingImageView;
 
-    @BindView(R.id.movie_detail_fragment_title)
+    @BindView(R.id.movie_detail_movie_title)
     public TextView movieTitleTextView;
 
-    @BindView(R.id.movie_detail_fragment_summary)
+    @BindView(R.id.movie_detail_summary_text)
     public TextView movieSummaryTextView;
 
-    @BindView(R.id.movie_detail_fragment_layout_trailer)
+    //TODO DetailFragment: Figure out what we are going to do with this layout group
     public LinearLayout trailerGroupLayout;
 
     private Unbinder unbinder;
@@ -81,7 +81,7 @@ public class DetailFragment extends Fragment {
             mListener = (MovieDetailInteractor) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement MovieRollFragmentInteractor");
+                    + " must implement ListingFragmentInteractor");
         }
     }
 
@@ -97,14 +97,15 @@ public class DetailFragment extends Fragment {
                     .load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()))
                     .into(movieHeadingImageView);
 
-            if(model.getVideoListing() != null) {
-                trailerGroupLayout.setVisibility(View.VISIBLE);
-                for (DetailedMovieModel.VideoModel video : model.getVideoListing().getVideos()) {
-                    if (video.getSite().equals("YouTube")) {
-                        trailerGroupLayout.addView(createTrailerViewButton());
-                    }
-                }
-            }
+            // TODO DetailFragment: figure out what we are doing with this
+//            if(model.getVideoListing() != null) {
+//                trailerGroupLayout.setVisibility(View.VISIBLE);
+//                for (DetailedMovieModel.VideoModel video : model.getVideoListing().getVideos()) {
+//                    if (video.getSite().equals("YouTube")) {
+//                        trailerGroupLayout.addView(createTrailerViewButton());
+//                    }
+//                }
+//            }
         });
 
 
@@ -123,7 +124,7 @@ public class DetailFragment extends Fragment {
     }
 
     public interface MovieDetailInteractor {
-        // TODO: Update argument type and name
+        // TODO DetailFragment: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/listing_drawer_item_this_month"
+        android:icon="@drawable/ic_upcoming"
+        android:title="@string/listing_nav_drawer_item_upcoming_string" />
+    <item
+        android:id="@+id/listing_drawer_item_next_month"
+        android:icon="@drawable/ic_movie_bucket"
+        android:title="@string/app_name" />
+</menu>

@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
-import net.chuzarski.moviebucket.network.NetworkState;
+import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
 
 import retrofit2.Call;
@@ -16,16 +16,16 @@ import timber.log.Timber;
 public class DetailRepository {
 
     private MovieNetworkService movieNetworkService;
-    private MutableLiveData<NetworkState> networkState;
+    private MutableLiveData<LoadState> networkState;
 
     public DetailRepository() {
         Timber.tag("DetailRepository");
         movieNetworkService = MovieNetworkServiceFactory.getInstance();
         networkState = new MutableLiveData<>();
-        networkState.postValue(NetworkState.FRESH);
+        networkState.postValue(LoadState.LOADING);
     }
 
-    public LiveData<NetworkState> getNetworkState() {
+    public LiveData<LoadState> getNetworkState() {
         return networkState;
     }
 
@@ -39,17 +39,17 @@ public class DetailRepository {
     public LiveData<DetailedMovieModel> getMovieById(int id) {
         final MutableLiveData<DetailedMovieModel> model = new MutableLiveData<>();
 
-        networkState.postValue(NetworkState.LOADING);
+        networkState.postValue(LoadState.LOADING);
         movieNetworkService.getMovieDetail(id).enqueue(new Callback<DetailedMovieModel>() {
             @Override
             public void onResponse(Call<DetailedMovieModel> call, Response<DetailedMovieModel> response) {
                 model.postValue(response.body());
-                networkState.postValue(NetworkState.LOADED);
+                networkState.postValue(LoadState.LOADED);
             }
 
             @Override
             public void onFailure(Call<DetailedMovieModel> call, Throwable t) {
-                networkState.postValue(NetworkState.FAILED);
+                networkState.postValue(LoadState.NETWORK_FAILED);
                 Timber.d("Failed with fetching movie by ID");
             }
         });

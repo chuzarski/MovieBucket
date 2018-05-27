@@ -17,7 +17,7 @@ public class CollectionModel {
     private String name;
 
     @SerializedName("parts")
-    private List<MovieListingItemModel> members;
+    private List<ListingItemModel> members;
 
     public int getId() {
         return id;
@@ -27,7 +27,7 @@ public class CollectionModel {
         return name;
     }
 
-    public List<MovieListingItemModel> getMembers() {
+    public List<ListingItemModel> getMembers() {
         return members;
     }
 }

@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.repository.movieroll;
+package net.chuzarski.moviebucket.ui.listing;
 
 import android.arch.paging.PagedListAdapter;
 import android.support.annotation.NonNull;
@@ -8,29 +8,29 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.models.ListingItemModel;
 import net.chuzarski.moviebucket.ui.listing.ListingViewHolder;
 
 /**
  * Created by cody on 3/23/18.
  */
 
-public class ListingPagedListAdapter extends PagedListAdapter<MovieListingItemModel, ListingViewHolder> {
+public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, ListingViewHolder> {
 
-    public static final DiffUtil.ItemCallback<MovieListingItemModel> diffCallback = new DiffUtil.ItemCallback<MovieListingItemModel>() {
+    public static final DiffUtil.ItemCallback<ListingItemModel> diffCallback = new DiffUtil.ItemCallback<ListingItemModel>() {
 
         @Override
-        public boolean areItemsTheSame(MovieListingItemModel oldItem, MovieListingItemModel newItem) {
+        public boolean areItemsTheSame(ListingItemModel oldItem, ListingItemModel newItem) {
             return oldItem.equals(newItem);
         }
 
         @Override
-        public boolean areContentsTheSame(MovieListingItemModel oldItem, MovieListingItemModel newItem) {
+        public boolean areContentsTheSame(ListingItemModel oldItem, ListingItemModel newItem) {
             return (oldItem.getId() == newItem.getId());
         }
     };
 
-    protected ListingPagedListAdapter() {
+    public ListingPagedListAdapter() {
         super(diffCallback);
     }
 

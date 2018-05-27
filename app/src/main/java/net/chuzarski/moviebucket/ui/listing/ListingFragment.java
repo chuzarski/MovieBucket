@@ -10,10 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
-import net.chuzarski.moviebucket.repository.movieroll.ListingPagedListAdapter;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
 
 import butterknife.BindView;
@@ -24,7 +25,7 @@ import timber.log.Timber;
 public class ListingFragment extends Fragment {
 
 
-    private MovieRollFragmentInteractor mListener;
+    private ListingFragmentInteractor mListener;
     private Unbinder unbinder;
 
 
@@ -47,21 +48,20 @@ public class ListingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof MovieRollFragmentInteractor) {
-            mListener = (MovieRollFragmentInteractor) context;
+        if (context instanceof ListingFragmentInteractor) {
+            mListener = (ListingFragmentInteractor) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement MovieRollFragmentInteractor");
+                    + " must implement ListingFragmentInteractor");
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Timber.tag("Movie Roll");
+        Timber.tag("ListingFragment");
 
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-        // TODO POSSIBLY make this passed as a fragment argument?
         viewModel.setRequestParams(new UpcomingMoviesParams.Builder("2018-03-23", "2018-03-30").build());
     }
 
@@ -90,6 +90,15 @@ public class ListingFragment extends Fragment {
         viewModel.getMovieList().observe(this, list -> {
             adapter.submitList(list);
         });
+
+        viewModel.getLoadState().observe(this, networkState -> {
+
+            if(networkState == LoadState.LOADING) {
+                Timber.d("Network Loading");
+            } else if (networkState == LoadState.LOADED){
+                Toast.makeText(getActivity().getApplicationContext(), "Loaded!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -104,7 +113,7 @@ public class ListingFragment extends Fragment {
         mListener = null;
     }
 
-    public interface MovieRollFragmentInteractor {
+    public interface ListingFragmentInteractor {
         // TODO add interface for fragment interaction
     }
 }

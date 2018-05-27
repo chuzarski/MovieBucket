@@ -9,7 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.models.MovieListingItemModel;
+import net.chuzarski.moviebucket.models.ListingItemModel;
 import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 
 import butterknife.BindView;
@@ -35,7 +35,11 @@ public class ListingViewHolder extends RecyclerView.ViewHolder {
         glideRequestManager = Glide.with(itemView);
     }
 
-    public void bind(MovieListingItemModel movie) {
+    public void bind(ListingItemModel movie) {
+        //for some reason database is returning null objects, but everything looks accounted for
+        // TODO fix database null issue?
+        if(movie == null)
+            return;
         title.setText(movie.getTitle());
         glideRequestManager.load(MovieImagePathHelper.createURLForBackdrop(movie.getPosterImagePath())).into(poster);
     }

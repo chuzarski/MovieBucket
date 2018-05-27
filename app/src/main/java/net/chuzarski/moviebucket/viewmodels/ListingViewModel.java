@@ -1,38 +1,55 @@
 package net.chuzarski.moviebucket.viewmodels;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.arch.paging.PagedList;
+import android.arch.persistence.room.Room;
+import android.support.annotation.NonNull;
 
+import net.chuzarski.moviebucket.BucketApplication;
+import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
+import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
+import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
-import net.chuzarski.moviebucket.models.MovieListingItemModel;
-import net.chuzarski.moviebucket.repository.movieroll.ListingRepository;
+import net.chuzarski.moviebucket.models.ListingItemModel;
+import net.chuzarski.moviebucket.repository.ListingRepository;
 
 /**
  * Created by cody on 3/21/18.
  */
 
-public class ListingViewModel extends ViewModel {
+public class ListingViewModel extends AndroidViewModel {
 
-    private LiveData<PagedList<MovieListingItemModel>> movieList;
+    private LiveData<PagedList<ListingItemModel>> movieList;
     private ListingRepository repo;
     private UpcomingMoviesParams requestParams;
 
+    public ListingViewModel(@NonNull Application app) {
+        super(app);
 
-    public ListingViewModel() {
-        repo = new ListingRepository();
+        repo = new ListingRepository(MovieNetworkServiceFactory.getInstance(),
+                Room.inMemoryDatabaseBuilder(app.getApplicationContext(), ListingCacheDb.class)
+                        .build(),
+                BucketApplication.getIoExectuor()
+                );
+
     }
 
     public void setRequestParams(UpcomingMoviesParams request) {
         requestParams = request;
     }
 
-    public LiveData<PagedList<MovieListingItemModel>> getMovieList() {
+    public LiveData<PagedList<ListingItemModel>> getMovieList() {
         if(movieList == null) {
             // TODO This is unsafe because we might not have params, definitely refactor
             movieList = repo.getMovieListing(requestParams);
         }
 
         return movieList;
+    }
+
+    public LiveData<LoadState> getLoadState() {
+        return repo.getLoadState();
     }
 }

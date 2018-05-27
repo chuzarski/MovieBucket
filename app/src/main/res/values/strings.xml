@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieBucket</string>
+    <string name="app_name">Movie Bucket</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -7,8 +7,21 @@
 
     <!-- General Strings -->
     <string name="movie_bucket_add_action_string">Add to Movie Bucket</string>
+
     <!-- DetailFragment Strings -->
     <string name="movie_detail_trailer_heading_string">Trailers</string>
-    <string name="movie_detail_backdrop_content_description_string">Movie Poster</string>
     <string name="movie_detail_series_heading_string">Series</string>
+
+    <!-- Content Descriptions -->
+    <string name="movie_detail_backdrop_content_description_string">Movie Backdrop</string>
+    <string name="listing_cardview_image_poster_description">Movie Poster</string>
+
+    <!--- MENUS -->
+    <!-- Listing nav drawer -->
+    <string name="listing_nav_drawer_item_upcoming_string">Upcoming</string>
+    <string name="action_timeframe">Time Frame</string>
+    <string name="action_timeframe_thisweek">This Week</string>
+    <string name="action_timeframe_thismonth">This Month</string>
+    <string name="action_timeframe_nextmonth">Next Month</string>
+    <string name="action_timeframe_nextthree">Next 3 Months</string>
 </resources>

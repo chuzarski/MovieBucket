@@ -89,6 +89,8 @@ public class MovieNetworkServiceTest {
 
     @Test
     public void validateUpcomingDiscoverFetch() {
+
+        // TODO MovieNetworkServiceTest: Redesign this test, this is a terrible way of handling this
         String language = "en";
         String region = "US";
         String releaseFrom = "2018-03-23";
