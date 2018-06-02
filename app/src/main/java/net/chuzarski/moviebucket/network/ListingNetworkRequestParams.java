@@ -4,7 +4,7 @@ package net.chuzarski.moviebucket.network;
  * Created by cody on 3/27/18.
  */
 
-public class UpcomingMoviesParams {
+public class ListingNetworkRequestParams {
 
     private String releaseDateRangeFrom;
     private String releaseDateRangeTo;
@@ -13,7 +13,7 @@ public class UpcomingMoviesParams {
     private int page;
 
 
-    private UpcomingMoviesParams(
+    private ListingNetworkRequestParams(
             String releaseFrom,
             String releaseTo,
             String lang,
@@ -51,6 +51,23 @@ public class UpcomingMoviesParams {
         this.page = p;
     }
 
+    public void setReleaseDateRangeFrom(String releaseDateRangeFrom) {
+        this.releaseDateRangeFrom = releaseDateRangeFrom;
+    }
+
+    public void setReleaseDateRangeTo(String releaseDateRangeTo) {
+        this.releaseDateRangeTo = releaseDateRangeTo;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    // TODO this builder may not be necessary
     public static class Builder {
 
         private String releaseFrom;
@@ -79,8 +96,8 @@ public class UpcomingMoviesParams {
             return this;
         }
 
-        public UpcomingMoviesParams build() {
-            return new UpcomingMoviesParams(releaseFrom, releaseTo, lang, reg, p);
+        public ListingNetworkRequestParams build() {
+            return new ListingNetworkRequestParams(releaseFrom, releaseTo, lang, reg, p);
         }
     }
 }

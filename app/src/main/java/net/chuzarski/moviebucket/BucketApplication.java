@@ -2,6 +2,8 @@ package net.chuzarski.moviebucket;
 
 import android.app.Application;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -18,7 +20,6 @@ public class BucketApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
@@ -28,6 +29,7 @@ public class BucketApplication extends Application {
 
         ioExectuor = Executors.newFixedThreadPool(3);
 
+        AndroidThreeTen.init(this);
     }
 
     public static Executor getIoExectuor() {

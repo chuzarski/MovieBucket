@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_refresh"
+        android:title="@string/action_refresh"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/listing_activity_action_time_menu"
         android:icon="@drawable/ic_time"
         android:title="@string/action_timeframe"

@@ -11,9 +11,13 @@ import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
 import net.chuzarski.moviebucket.common.LoadState;
-import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 import net.chuzarski.moviebucket.repository.ListingRepository;
+
+import org.threeten.bp.LocalDate;
+
+import timber.log.Timber;
 
 /**
  * Created by cody on 3/21/18.
@@ -23,7 +27,7 @@ public class ListingViewModel extends AndroidViewModel {
 
     private LiveData<PagedList<ListingItemModel>> movieList;
     private ListingRepository repo;
-    private UpcomingMoviesParams requestParams;
+    private ListingNetworkRequestParams requestParams;
 
     public ListingViewModel(@NonNull Application app) {
         super(app);
@@ -36,13 +40,38 @@ public class ListingViewModel extends AndroidViewModel {
 
     }
 
-    public void setRequestParams(UpcomingMoviesParams request) {
+    public void setRequestParams(@NonNull  ListingNetworkRequestParams request) {
         requestParams = request;
     }
 
+    public void initRequestParams(@NonNull ListingNetworkRequestParams request) {
+        if (requestParams != null) {
+            return;
+        }
+
+        requestParams = request;
+    }
+
+    public ListingNetworkRequestParams getRequestParams() {
+        return requestParams;
+    }
+
+    public void updateTimeFrame(LocalDate from, LocalDate to) {
+        Timber.d("Updating request time frame");
+        requestParams.setReleaseDateRangeFrom(from.toString());
+        requestParams.setReleaseDateRangeTo(to.toString());
+
+        refresh();
+    }
+
+    public void refresh() {
+        Timber.d("Triggering refresh..");
+        repo.refresh();
+    }
+
+
     public LiveData<PagedList<ListingItemModel>> getMovieList() {
         if(movieList == null) {
-            // TODO This is unsafe because we might not have params, definitely refactor
             movieList = repo.getMovieListing(requestParams);
         }
 

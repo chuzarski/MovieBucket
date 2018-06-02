@@ -3,9 +3,13 @@ package net.chuzarski.moviebucket.ui.listing;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.common.StaticValues;
+import net.chuzarski.moviebucket.common.TimeFrame;
+
+import org.threeten.bp.LocalDate;
 
 import timber.log.Timber;
 
@@ -29,4 +33,43 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         getMenuInflater().inflate(R.menu.listing_activity_action_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // TODO This needs to be refactored.. Talk about memory usage?!
+            // Wayyy too much object creation
+            case R.id.action_timeframe_thisweek:
+                fragment.setTimeframe(TimeFrame.thisWeek());
+                return true;
+            case R.id.action_timeframe_thismonth:
+                fragment.setTimeframe(TimeFrame.thisMonth());
+                return true;
+            case R.id.action_timeframe_nextmonth:
+                fragment.setTimeframe(TimeFrame.nextMonth());
+                return true;
+            case R.id.action_timeframe_nextthree:
+                fragment.setTimeframe(TimeFrame.nextThreeMonths());
+                return true;
+            case R.id.action_refresh:
+                fragment.refreshList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    // listing fragment options
+    @Override
+    public void disableReloadAction() {
+        // TODO implement
+        Timber.d("Implement disabling reload action");
+    }
+
+    @Override
+    public void enabledReloadAction() {
+        // TODO implement
+        Timber.d("Implement enabling reload action");
+    }
+
 }

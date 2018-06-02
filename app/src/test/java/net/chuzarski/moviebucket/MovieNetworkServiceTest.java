@@ -2,7 +2,7 @@ package net.chuzarski.moviebucket;
 
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
-import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
 import net.chuzarski.moviebucket.models.CollectionModel;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.models.DiscoverModel;
@@ -60,14 +60,14 @@ public class MovieNetworkServiceTest {
 
     @Test
     public void validateUpcomingDiscoverFetchWithParams() {
-        UpcomingMoviesParams requestParams;
+        ListingNetworkRequestParams requestParams;
 
         Response<DiscoverModel> response = null;
         DiscoverModel model;
         Call<DiscoverModel> call;
         int numResults;
 
-        requestParams = new UpcomingMoviesParams.Builder("2018-03-23", "2018-03-30").build();
+        requestParams = new ListingNetworkRequestParams.Builder("2018-03-23", "2018-03-30").build();
 
         call = service.getUpcomingMovies(requestParams.getReleaseDateRangeFrom(),
                 requestParams.getReleaseDateRangeTo(),

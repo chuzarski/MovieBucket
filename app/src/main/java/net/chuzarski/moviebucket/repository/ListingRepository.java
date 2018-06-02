@@ -7,11 +7,12 @@ import android.arch.paging.PagedList;
 import android.arch.paging.PagedList.Config;
 import android.support.annotation.NonNull;
 
+import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.common.LoadState;
-import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 
 import java.util.List;
@@ -45,13 +46,22 @@ public class ListingRepository {
         return loadState;
     }
 
-    public LiveData<PagedList<ListingItemModel>> getMovieListing(UpcomingMoviesParams requestParams) {
-        Config listConfig = new Config.Builder().setPageSize(3).setPrefetchDistance(2).build();
+    public LiveData<PagedList<ListingItemModel>> getMovieListing(ListingNetworkRequestParams requestParams) {
+        Config listConfig = new Config.Builder()
+                .setPageSize(StaticValues.listingPageSize)
+                .setPrefetchDistance(StaticValues.listingPrefetchDistance)
+                .build();
 
         return new LivePagedListBuilder<Integer, ListingItemModel>(db.listingDao().getAllDataSource(), listConfig)
                 .setFetchExecutor(ioExectuor)
                 .setBoundaryCallback(new ListBoundaryNetworkLoader(requestParams))
                 .build();
+    }
+
+    public void refresh() {
+        ioExectuor.execute(() -> {
+            db.clearAllTables();
+        });
     }
 
     private void asyncInsertAllIntoListingCache(List<ListingItemModel> models) {
@@ -63,9 +73,9 @@ public class ListingRepository {
     private class ListBoundaryNetworkLoader extends PagedList.BoundaryCallback<ListingItemModel> {
         private int currentPage = 0;
         private int totalPages = 0;
-        private UpcomingMoviesParams requestParams;
+        private ListingNetworkRequestParams requestParams;
 
-        ListBoundaryNetworkLoader(UpcomingMoviesParams params) {
+        ListBoundaryNetworkLoader(ListingNetworkRequestParams params) {
             this.requestParams = params;
         }
 

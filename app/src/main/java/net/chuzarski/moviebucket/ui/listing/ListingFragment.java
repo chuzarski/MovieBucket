@@ -14,8 +14,11 @@ import android.widget.Toast;
 
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.LoadState;
-import net.chuzarski.moviebucket.network.UpcomingMoviesParams;
+import net.chuzarski.moviebucket.common.TimeFrame;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
+
+import org.threeten.bp.LocalDate;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +48,26 @@ public class ListingFragment extends Fragment {
         return new ListingFragment();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Fragment specific
+    ///////////////////////////////////////////////////////////////////////////
+
+    public void setTimeframe(TimeFrame time) {
+        viewModel.updateTimeFrame(time.getFrom(), time.getTo());
+    }
+
+    public void setTimeframe(LocalDate from, LocalDate to) {
+        viewModel.updateTimeFrame(from, to);
+    }
+
+    public void refreshList() {
+        viewModel.refresh();
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Overrides
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -58,11 +81,16 @@ public class ListingFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        TimeFrame defaultTimeframe = TimeFrame.thisWeek();
+
+
         super.onCreate(savedInstanceState);
         Timber.tag("ListingFragment");
 
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-        viewModel.setRequestParams(new UpcomingMoviesParams.Builder("2018-03-23", "2018-03-30").build());
+        viewModel.initRequestParams(new ListingNetworkRequestParams.Builder(defaultTimeframe.getFrom().toString(),
+                defaultTimeframe.getTo().toString())
+                .build());
     }
 
     @Override
@@ -94,9 +122,9 @@ public class ListingFragment extends Fragment {
         viewModel.getLoadState().observe(this, networkState -> {
 
             if(networkState == LoadState.LOADING) {
-                Timber.d("Network Loading");
+                mListener.disableReloadAction();
             } else if (networkState == LoadState.LOADED){
-                Toast.makeText(getActivity().getApplicationContext(), "Loaded!", Toast.LENGTH_SHORT).show();
+                mListener.enabledReloadAction();
             }
         });
     }
@@ -115,5 +143,7 @@ public class ListingFragment extends Fragment {
 
     public interface ListingFragmentInteractor {
         // TODO add interface for fragment interaction
+        void disableReloadAction();
+        void enabledReloadAction();
     }
 }
