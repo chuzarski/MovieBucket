@@ -9,6 +9,7 @@ import net.chuzarski.moviebucket.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity implements DetailFragment.MovieDetailInteractor {
 
@@ -17,12 +18,14 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     @BindView(R.id.activity_fragment_movie_detail)
     public FrameLayout fragmentFrame;
 
+    private int movieId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
         ButterKnife.bind(this);
-
+        movieId = getIntent().getExtras().getInt("movie_id", -1);
         initFragment();
     }
 
@@ -39,7 +42,14 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
     }
 
     private void initFragment() {
-        fragment = DetailFragment.newInstance(198663);
+        // TODO there has to be a better way
+        if (movieId == -1) {
+            Timber.e("A movie id was not passed to the activity, fragment will not be added");
+            return;
+        }
+
+
+        fragment = DetailFragment.newInstance(movieId);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_fragment_movie_detail, fragment).commit();
     }
 }

@@ -1,5 +1,7 @@
 package net.chuzarski.moviebucket.ui.listing;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +10,7 @@ import android.view.MenuItem;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.common.TimeFrame;
+import net.chuzarski.moviebucket.ui.detail.DetailActivity;
 
 import org.threeten.bp.LocalDate;
 
@@ -70,6 +73,13 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     public void enabledReloadAction() {
         // TODO implement
         Timber.d("Implement enabling reload action");
+    }
+
+    @Override
+    public void startMovieDetail(@NonNull int id) {
+        Intent detailActivityIntent = new Intent(this, DetailActivity.class);
+        detailActivityIntent.putExtra("movie_id", id);
+        startActivity(detailActivityIntent);
     }
 
 }

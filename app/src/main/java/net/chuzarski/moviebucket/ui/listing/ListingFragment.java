@@ -3,6 +3,7 @@ package net.chuzarski.moviebucket.ui.listing;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.LoadState;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class ListingFragment extends Fragment {
+public class ListingFragment extends Fragment implements ListingItemInteractor {
 
 
     private ListingFragmentInteractor mListener;
@@ -83,7 +83,6 @@ public class ListingFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         TimeFrame defaultTimeframe = TimeFrame.thisWeek();
 
-
         super.onCreate(savedInstanceState);
         Timber.tag("ListingFragment");
 
@@ -105,7 +104,7 @@ public class ListingFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        adapter = new ListingPagedListAdapter();
+        adapter = new ListingPagedListAdapter(this);
         layoutManager = new LinearLayoutManager(getContext());
 
         movieRecyclerView.setLayoutManager(layoutManager);
@@ -141,9 +140,20 @@ public class ListingFragment extends Fragment {
         mListener = null;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // List item interaction
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void openMovieDetail(int id) {
+        mListener.startMovieDetail(id);
+    }
+
     public interface ListingFragmentInteractor {
         // TODO add interface for fragment interaction
         void disableReloadAction();
         void enabledReloadAction();
+
+        // opening movies
+        void startMovieDetail(@NonNull int id);
     }
 }

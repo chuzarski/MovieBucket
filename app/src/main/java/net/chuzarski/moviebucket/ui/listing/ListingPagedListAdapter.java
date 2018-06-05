@@ -17,6 +17,8 @@ import net.chuzarski.moviebucket.ui.listing.ListingViewHolder;
 
 public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, ListingViewHolder> {
 
+    private ListingItemInteractor interactor;
+
     public static final DiffUtil.ItemCallback<ListingItemModel> diffCallback = new DiffUtil.ItemCallback<ListingItemModel>() {
 
         @Override
@@ -30,15 +32,16 @@ public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, 
         }
     };
 
-    public ListingPagedListAdapter() {
+    public ListingPagedListAdapter(ListingItemInteractor interactor) {
         super(diffCallback);
+        this.interactor = interactor;
     }
 
     @NonNull
     @Override
     public ListingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item_view, parent, false);
-        return new ListingViewHolder(view);
+        return new ListingViewHolder(view, interactor);
     }
 
     @Override

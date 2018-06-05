@@ -25,4 +25,6 @@
     <string name="action_timeframe_nextmonth">Next Month</string>
     <string name="action_timeframe_nextthree">Next 3 Months</string>
     <string name="action_refresh">Refresh</string>
+    <string name="listing_item_action_open">Open</string>
+    <string name="listing_item_action_share">Share</string>
 </resources>
