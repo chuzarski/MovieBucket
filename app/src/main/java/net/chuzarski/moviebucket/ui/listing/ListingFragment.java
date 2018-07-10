@@ -81,9 +81,8 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        TimeFrame defaultTimeframe = TimeFrame.thisWeek();
-
         super.onCreate(savedInstanceState);
+        TimeFrame defaultTimeframe = TimeFrame.thisWeek();
         Timber.tag("ListingFragment");
 
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
@@ -101,19 +100,16 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
         adapter = new ListingPagedListAdapter(this);
         layoutManager = new LinearLayoutManager(getContext());
 
         movieRecyclerView.setLayoutManager(layoutManager);
         movieRecyclerView.setAdapter(adapter);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+
         viewModel.getMovieList().observe(this, list -> {
             adapter.submitList(list);
         });

@@ -24,7 +24,6 @@ import timber.log.Timber;
 
 public class ListingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-    private Unbinder unbinder;
     private ListingItemInteractor itemInteractor;
 
     @BindView(R.id.movie_item_title)
@@ -46,18 +45,15 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
 
     public ListingViewHolder(View itemView, ListingItemInteractor interactor) {
         super(itemView);
-        unbinder = ButterKnife.bind(this, itemView);
-        glideRequestManager = Glide.with(itemView);
         itemInteractor = interactor;
     }
 
     public void bind(ListingItemModel movie) {
-        //for some reason database is returning null objects, but everything looks accounted for
-        // TODO fix database null issue?
-        if(movie == null) {
-            Timber.d("ViewHolder received a null object on bind");
+        if(movie == null)
             return;
-        }
+
+        ButterKnife.bind(this, itemView);
+        glideRequestManager = Glide.with(poster.getContext());
 
         title.setText(movie.getTitle());
         glideRequestManager.load(MovieImagePathHelper.createURLForBackdrop(movie.getPosterImagePath())).into(poster);
@@ -70,7 +66,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
     }
 
     public void unbind() {
-        unbinder.unbind();
+        glideRequestManager.clear(poster);
     }
 
     @Override

@@ -27,8 +27,11 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         Timber.d("Activity Created");
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        fragment = ListingFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+
+        if(savedInstanceState == null) {
+            fragment = ListingFragment.newInstance();
+            getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+        }
     }
 
     @Override
@@ -81,5 +84,6 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         detailActivityIntent.putExtra("movie_id", id);
         startActivity(detailActivityIntent);
     }
+
 
 }

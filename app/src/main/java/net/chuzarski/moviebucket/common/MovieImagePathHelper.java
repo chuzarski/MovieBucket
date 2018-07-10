@@ -16,8 +16,28 @@ public class MovieImagePathHelper {
     private static String backdropDefaultSize = "original";
     private static String backdropUrlBase = "https://image.tmdb.org/t/p/";
 
+    public enum Size {
+        small, medium, xlarge, xxlarge, xxxlarge
+    }
+
     public static String createURLForBackdrop(String path) {
         // TODO refactor this to do a better job at checking for escaped slashes and obviously dynamic image sizes.
         return backdropUrlBase + backdropDefaultSize + path;
+    }
+
+    public static String getBackdropURL() {
+        return "";
+    }
+
+    public static String getPosterURL() {
+        return "";
+    }
+
+    private static String resolvePosterSize(Size sz) {
+        return "";
+    }
+
+    private static String resolveBackdropSize(Size sz) {
+        return "";
     }
 }

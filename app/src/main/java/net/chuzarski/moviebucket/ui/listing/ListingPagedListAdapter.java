@@ -48,4 +48,10 @@ public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, 
     public void onBindViewHolder(@NonNull ListingViewHolder holder, int position) {
         holder.bind(getItem(position));
     }
+
+    @Override
+    public void onViewRecycled(@NonNull ListingViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.unbind();
+    }
 }
