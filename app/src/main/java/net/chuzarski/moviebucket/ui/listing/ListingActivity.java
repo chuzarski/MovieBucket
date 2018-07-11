@@ -12,13 +12,16 @@ import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.common.TimeFrame;
 import net.chuzarski.moviebucket.ui.detail.DetailActivity;
 
-import org.threeten.bp.LocalDate;
+import java.util.List;
 
 import timber.log.Timber;
 
 public class ListingActivity extends AppCompatActivity implements ListingFragment.ListingFragmentInteractor {
 
+    public static final String FRAGMENT_KEY = "FRAG_LISTING";
+
     ListingFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +34,15 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         if(savedInstanceState == null) {
             fragment = ListingFragment.newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+        } else {
+            fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_KEY, fragment);
+        super.onSaveInstanceState(outState);
     }
 
     @Override

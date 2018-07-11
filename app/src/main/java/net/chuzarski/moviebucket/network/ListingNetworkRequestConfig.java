@@ -4,7 +4,7 @@ package net.chuzarski.moviebucket.network;
  * Created by cody on 3/27/18.
  */
 
-public class ListingNetworkRequestParams {
+public class ListingNetworkRequestConfig {
 
     private String releaseDateRangeFrom;
     private String releaseDateRangeTo;
@@ -13,7 +13,7 @@ public class ListingNetworkRequestParams {
     private int page;
 
 
-    private ListingNetworkRequestParams(
+    private ListingNetworkRequestConfig(
             String releaseFrom,
             String releaseTo,
             String lang,
@@ -96,8 +96,8 @@ public class ListingNetworkRequestParams {
             return this;
         }
 
-        public ListingNetworkRequestParams build() {
-            return new ListingNetworkRequestParams(releaseFrom, releaseTo, lang, reg, p);
+        public ListingNetworkRequestConfig build() {
+            return new ListingNetworkRequestConfig(releaseFrom, releaseTo, lang, reg, p);
         }
     }
 }

@@ -12,7 +12,7 @@ import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.DiscoverModel;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.common.LoadState;
-import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestConfig;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 
 import java.util.List;
@@ -32,21 +32,23 @@ public class ListingRepository {
     private MovieNetworkService networkService;
     private ListingCacheDb db;
     private Executor ioExectuor;
+    private ListingNetworkRequestConfig networkRequestConfig;
 
-    public ListingRepository(MovieNetworkService networkService, ListingCacheDb db, Executor ioExecutor) {
+    public ListingRepository(MovieNetworkService networkService, ListingCacheDb db, Executor ioExecutor, ListingNetworkRequestConfig networkRequestConfig) {
         loadState = new MutableLiveData<>();
         loadState.postValue(LoadState.LOADING);
 
         this.networkService = networkService;
         this.db = db;
         this.ioExectuor = ioExecutor;
+        this.networkRequestConfig = networkRequestConfig;
     }
 
     public LiveData<LoadState> getLoadState() {
         return loadState;
     }
 
-    public LiveData<PagedList<ListingItemModel>> getMovieListing(ListingNetworkRequestParams requestParams) {
+    public LiveData<PagedList<ListingItemModel>> getMovieListing() {
         Config listConfig = new Config.Builder()
                 .setPageSize(StaticValues.listingPageSize)
                 .setPrefetchDistance(StaticValues.listingPrefetchDistance)
@@ -54,7 +56,7 @@ public class ListingRepository {
 
         return new LivePagedListBuilder<Integer, ListingItemModel>(db.listingDao().getAllDataSource(), listConfig)
                 .setFetchExecutor(ioExectuor)
-                .setBoundaryCallback(new ListBoundaryNetworkLoader(requestParams))
+                .setBoundaryCallback(new ListBoundaryNetworkLoader(networkRequestConfig))
                 .build();
     }
 
@@ -73,20 +75,20 @@ public class ListingRepository {
     private class ListBoundaryNetworkLoader extends PagedList.BoundaryCallback<ListingItemModel> {
         private int currentPage = 0;
         private int totalPages = 0;
-        private ListingNetworkRequestParams requestParams;
+        private ListingNetworkRequestConfig requestConfig;
 
-        ListBoundaryNetworkLoader(ListingNetworkRequestParams params) {
-            this.requestParams = params;
+        ListBoundaryNetworkLoader(ListingNetworkRequestConfig requestConfig) {
+            this.requestConfig = requestConfig;
         }
 
         @Override
         public void onZeroItemsLoaded() {
             super.onZeroItemsLoaded();
             loadState.postValue(LoadState.LOADING);
-            networkService.getUpcomingMovies(requestParams.getReleaseDateRangeFrom(),
-                    requestParams.getReleaseDateRangeTo(),
-                    requestParams.getLanguage(),
-                    requestParams.getRegion(), 1)
+            networkService.getUpcomingMovies(requestConfig.getReleaseDateRangeFrom(),
+                    requestConfig.getReleaseDateRangeTo(),
+                    requestConfig.getLanguage(),
+                    requestConfig.getRegion(), 1)
                     .enqueue(new Callback<DiscoverModel>() {
                         @Override
                         public void onResponse(Call<DiscoverModel> call, Response<DiscoverModel> response) {
@@ -113,10 +115,10 @@ public class ListingRepository {
 
             if(currentPage + 1 <= totalPages) {
                 loadState.postValue(LoadState.LOADING);
-                networkService.getUpcomingMovies(requestParams.getReleaseDateRangeFrom(),
-                        requestParams.getReleaseDateRangeTo(),
-                        requestParams.getLanguage(),
-                        requestParams.getRegion(), ++currentPage)
+                networkService.getUpcomingMovies(requestConfig.getReleaseDateRangeFrom(),
+                        requestConfig.getReleaseDateRangeTo(),
+                        requestConfig.getLanguage(),
+                        requestConfig.getRegion(), ++currentPage)
                         .enqueue(new Callback<DiscoverModel>() {
                             @Override
                             public void onResponse(Call<DiscoverModel> call, Response<DiscoverModel> response) {

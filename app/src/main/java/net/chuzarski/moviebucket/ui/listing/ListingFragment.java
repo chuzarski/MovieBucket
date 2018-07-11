@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,7 @@ import android.view.ViewGroup;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.common.TimeFrame;
-import net.chuzarski.moviebucket.network.ListingNetworkRequestParams;
+import net.chuzarski.moviebucket.network.ListingNetworkRequestConfig;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
 
 import org.threeten.bp.LocalDate;
@@ -82,13 +81,9 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TimeFrame defaultTimeframe = TimeFrame.thisWeek();
         Timber.tag("ListingFragment");
 
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-        viewModel.initRequestParams(new ListingNetworkRequestParams.Builder(defaultTimeframe.getFrom().toString(),
-                defaultTimeframe.getTo().toString())
-                .build());
     }
 
     @Override

@@ -2,6 +2,10 @@ package net.chuzarski.moviebucket.common;
 
 import org.threeten.bp.LocalDate;
 
+
+/**
+ * Simple holder class to represent a time frame
+ */
 public class TimeFrame {
 
     private LocalDate from;
