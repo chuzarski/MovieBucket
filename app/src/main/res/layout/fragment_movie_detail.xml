@@ -1,103 +1,49 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/movie_detail_heading_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="false"
+        android:contentDescription="@string/movie_detail_backdrop_content_description_string"
+        tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/moviedetailscreen/backdrop.jpg" />
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".ui.listing.ListingActivity">
+        android:scrollbarAlwaysDrawVerticalTrack="false"
+        android:scrollbarAlwaysDrawHorizontalTrack="false">
 
-        <RelativeLayout
-            android:id="@+id/movie_detail_layout_group_1"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/movie_detail_dimen_layout_margin">
-            <ImageView
-                android:id="@+id/movie_detail_heading_imageview"
+            android:layout_marginEnd="@dimen/margin_padding_size_small"
+            android:layout_marginStart="@dimen/margin_padding_size_small">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/movie_detail_backdrop_content_description_string"
-                tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/moviedetailscreen/backdrop.jpg" />
-
-            <TextView
-                android:id="@+id/movie_detail_movie_title"
-                android:layout_below="@+id/movie_detail_heading_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/movie_detail_style_heading_text"
-                tools:text="Tomb Radier" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/movie_detail_layout_group_2"
-            android:layout_below="@+id/movie_detail_layout_group_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/movie_detail_layout_group_dimensions">
-
-            <TextView
-                android:id="@+id/movie_detail_movie_release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                tools:text="Releases: 3/8/2018" />
-
-            <Button
-                android:id="@+id/movie_detail_add_to_moviebucket_primary_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:gravity="end"
-                tools:text="@string/movie_bucket_add_action_string" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/movie_detail_summary_text"
-            android:layout_below="@+id/movie_detail_layout_group_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/movie_detail_layout_group_dimensions"
-            tools:text="Lara Croft, the fiercely independent daughter of a missing adventurer, must push herself beyond her limits when she finds herself on the island where her father disappeared."/>
-
-        <LinearLayout
-            android:id="@+id/movie_detail_layout_group_3"
-            android:layout_below="@+id/movie_detail_summary_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/movie_detail_layout_group_dimensions">
-            <TextView
-                android:id="@+id/movie_detail_trailer_heading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/movie_detail_style_heading_text"
-                android:text="@string/movie_detail_trailer_heading_string"/>
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/movie_detail_layout_group_4"
-            android:layout_below="@+id/movie_detail_layout_group_3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/movie_detail_layout_group_dimensions">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/movie_detail_series_heading_string"
-                style="@style/movie_detail_style_heading_text"/>
-        </RelativeLayout>
-        <Button
-            android:id="@+id/movie_detail_add_to_moviebucket_secondary_button"
-            android:layout_below="@+id/movie_detail_layout_group_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/movie_detail_layout_group_dimensions"
-            tools:text="@string/movie_bucket_add_action_string"/>
-    </RelativeLayout>
-</ScrollView>
+                android:layout_height="match_parent"
+                android:paddingStart="@dimen/margin_padding_size_small"
+                android:paddingEnd="@dimen/margin_padding_size_small"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/movie_detail_movie_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_large"
+                    />
+                <TextView
+                    android:id="@+id/movie_detail_movie_summary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_small"
+                    android:layout_marginTop="@dimen/margin_padding_size_small"
+                    />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </ScrollView>
+</FrameLayout>

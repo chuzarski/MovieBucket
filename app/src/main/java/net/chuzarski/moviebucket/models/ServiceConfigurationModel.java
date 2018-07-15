@@ -24,8 +24,11 @@ public class ServiceConfigurationModel {
 
     public class ImagesConfigurationModel {
 
-        @SerializedName("secure_base_url")
+        @SerializedName("base_url")
         private String baseUrl;
+
+        @SerializedName("secure_base_url")
+        private String secureBaseUrl;
 
         @SerializedName("poster_sizes")
         private List<String> posterSizes;
@@ -43,6 +46,14 @@ public class ServiceConfigurationModel {
 
         public List<String> getBackdropSizes() {
             return backdropSizes;
+        }
+
+        public String getSecureBaseUrl() {
+            return secureBaseUrl;
+        }
+
+        public void setSecureBaseUrl(String secureBaseUrl) {
+            this.secureBaseUrl = secureBaseUrl;
         }
     }
 

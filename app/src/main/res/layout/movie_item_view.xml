@@ -7,36 +7,41 @@
     android:layout_height="wrap_content"
     android:id="@+id/movie_item_layout"
     card_view:cardCornerRadius="4dp"
-    android:layout_marginBottom="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginBottom="@dimen/margin_padding_size_medium"
+    android:layout_marginTop="@dimen/margin_padding_size_medium"
+    android:layout_marginStart="@dimen/margin_padding_size_small"
+    android:layout_marginEnd="@dimen/margin_padding_size_small">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:orientation="vertical">
-
+        android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/movie_poster_image"
             android:layout_width="match_parent"
-            android:layout_height="441dp"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:contentDescription="@string/listing_cardview_image_poster_description"
             android:cropToPadding="false"
-            android:scaleType="centerInside"
             tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/listing/movie_poster.jpg" />
 
         <TextView
+            android:layout_below="@id/movie_poster_image"
             android:id="@+id/movie_item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@android:style/TextAppearance.Material.Large"
+            android:textSize="@dimen/text_size_large"
+            android:paddingEnd="@dimen/margin_padding_size_small"
+            android:paddingStart="@dimen/margin_padding_size_small"
             tools:text="Tomb Raider" />
 
+
         <LinearLayout
+            android:layout_below="@id/movie_item_title"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:paddingStart="@dimen/margin_padding_size_small"
+            android:paddingEnd="@dimen/margin_padding_size_small"
             android:orientation="horizontal">
 
             <ImageButton
@@ -44,6 +49,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingStart="@dimen/margin_padding_size_small"
+                android:paddingEnd="@dimen/margin_padding_size_small"
                 android:contentDescription="@string/listing_item_action_open"
                 card_view:srcCompat="@drawable/ic_open" />
 
@@ -52,8 +59,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingEnd="@dimen/margin_padding_size_small"
+                android:paddingStart="@dimen/margin_padding_size_small"
                 android:contentDescription="@string/listing_item_action_share"
                 card_view:srcCompat="@drawable/ic_share" />
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

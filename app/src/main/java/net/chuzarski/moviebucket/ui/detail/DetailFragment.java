@@ -14,35 +14,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.common.StaticHelpers;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 import net.chuzarski.moviebucket.viewmodels.DetailViewModel;
 
+import org.w3c.dom.Text;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import timber.log.Timber;
 
 public class DetailFragment extends Fragment {
 
     private MovieDetailInteractor mListener;
     private DetailViewModel viewModel;
 
-    @BindView(R.id.movie_detail_heading_imageview)
-    public ImageView movieHeadingImageView;
+    //TODO DetailFragment: Figure out what we are going to do with this layout group
+    public LinearLayout trailerGroupLayout;
 
     @BindView(R.id.movie_detail_movie_title)
     public TextView movieTitleTextView;
 
-    @BindView(R.id.movie_detail_summary_text)
+    @BindView(R.id.movie_detail_movie_summary)
     public TextView movieSummaryTextView;
 
-    //TODO DetailFragment: Figure out what we are going to do with this layout group
-    public LinearLayout trailerGroupLayout;
+    @BindView(R.id.movie_detail_heading_imageview)
+    public ImageView movieHeadingImageView;
 
     private Unbinder unbinder;
-
 
     public DetailFragment() {
         // Required empty public constructor
@@ -63,6 +67,7 @@ public class DetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         viewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
+
     }
 
     @Override
@@ -88,24 +93,12 @@ public class DetailFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         viewModel.getMovieModel(getArguments().getInt("MOVIE_ID")).observe(this, model -> { // TODO We blindly make the assumption that this value is in the bundle. This cannot be.);
+            String backdropPath;
             movieTitleTextView.setText(model.getTitle());
             movieSummaryTextView.setText(model.getOverview());
 
-            Glide.with(this)
-                    .load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()))
-                    .into(movieHeadingImageView);
-
-            // TODO DetailFragment: figure out what we are doing with this
-//            if(model.getVideoListing() != null) {
-//                trailerGroupLayout.setVisibility(View.VISIBLE);
-//                for (DetailedMovieModel.VideoModel video : model.getVideoListing().getVideos()) {
-//                    if (video.getSite().equals("YouTube")) {
-//                        trailerGroupLayout.addView(createTrailerViewButton());
-//                    }
-//                }
-//            }
+            Glide.with(movieHeadingImageView).load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()));
         });
 
 

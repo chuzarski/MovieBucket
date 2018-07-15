@@ -4,6 +4,16 @@ package net.chuzarski.moviebucket.common;
  * Created by cody on 3/26/18.
  */
 
+import net.chuzarski.moviebucket.models.ServiceConfigurationModel;
+
+import net.chuzarski.moviebucket.models.ServiceConfigurationModel.ImagesConfigurationModel;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class is a helper for creating URLs to the movie poster or backdrop images
  *
@@ -16,6 +26,10 @@ public class MovieImagePathHelper {
     private static String backdropDefaultSize = "original";
     private static String backdropUrlBase = "https://image.tmdb.org/t/p/";
 
+
+    private Map<String, Integer> backdropSizes;
+    private Map<String, Integer> posterSizes;
+
     public enum Size {
         small, medium, xlarge, xxlarge, xxxlarge
     }
@@ -25,19 +39,34 @@ public class MovieImagePathHelper {
         return backdropUrlBase + backdropDefaultSize + path;
     }
 
-    public static String getBackdropURL() {
-        return "";
+    public MovieImagePathHelper(ImagesConfigurationModel configModel) {
+        backdropSizes = new HashMap<>();
+        posterSizes = new HashMap<>();
+
+        parseSizesFromString(configModel.getBackdropSizes(), backdropSizes);
+        parseSizesFromString(configModel.getPosterSizes(), posterSizes);
     }
 
-    public static String getPosterURL() {
-        return "";
+    private void parseSizesFromString(List<String> sizes, Map<String, Integer> outMap) {
+        for(String strSize : sizes) {
+            if(strSize.equals("original")) {
+                outMap.put(strSize, Integer.MAX_VALUE);
+            } else {
+                outMap.put(strSize, Integer.parseInt(strSize.replaceAll("[^\\d]", "")));
+            }
+        }
     }
 
-    private static String resolvePosterSize(Size sz) {
-        return "";
+    public Map<String, Integer> getBackdropSizes() {
+        return backdropSizes;
     }
 
-    private static String resolveBackdropSize(Size sz) {
-        return "";
+    public Map<String, Integer> getPosterSizes() {
+        return posterSizes;
+    }
+
+    private void resolveSize(int dp, int dpi, Map<String, Integer> map) {
+        int px = (int) (dp * dpi + 0.5f);
+
     }
 }

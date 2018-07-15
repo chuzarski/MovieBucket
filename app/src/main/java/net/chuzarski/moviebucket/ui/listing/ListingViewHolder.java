@@ -46,21 +46,20 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
     public ListingViewHolder(View itemView, ListingItemInteractor interactor) {
         super(itemView);
         itemInteractor = interactor;
+
+        ButterKnife.bind(this, itemView);
+        glideRequestManager = Glide.with(poster.getContext());
+
+        openButton.setOnClickListener(this);
     }
 
     public void bind(ListingItemModel movie) {
         if(movie == null)
             return;
 
-        ButterKnife.bind(this, itemView);
-        glideRequestManager = Glide.with(poster.getContext());
-
         title.setText(movie.getTitle());
         glideRequestManager.load(MovieImagePathHelper.createURLForBackdrop(movie.getPosterImagePath())).into(poster);
 
-        if (!openButton.hasOnClickListeners()) {
-            openButton.setOnClickListener(this);
-        }
 
         movieId = movie.getId();
     }
