@@ -22,7 +22,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/listing_cardview_image_poster_description"
             android:cropToPadding="false"
-            tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/listing/movie_poster.jpg" />
+            tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/listing/minicard_backdrop.jpg" />
 
         <TextView
             android:layout_below="@id/movie_poster_image"
