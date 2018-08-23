@@ -27,4 +27,11 @@
     <string name="action_refresh">Refresh</string>
     <string name="listing_item_action_open">Open</string>
     <string name="listing_item_action_share">Share</string>
+    
+    <string-array name="movie_feeds">
+        <item>Upcoming</item>
+        <item>Now Playing</item>
+        <item>Top Rated</item>
+        <item>Popular</item>
+    </string-array>
 </resources>

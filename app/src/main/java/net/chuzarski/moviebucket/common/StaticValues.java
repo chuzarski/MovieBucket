@@ -15,7 +15,7 @@ public class StaticValues {
 
     // Listing Types
     public static final int LISTING_TYPE_UPCOMING = 0;
-    public static final int LISTING_TYPE_TOP_RATED = 1;
-    public static final int LISTING_TYPE_POPULAR = 2;
-    public static final int LISTING_TYPE_NOW_PLAYING = 3;
+    public static final int LISTING_TYPE_NOW_PLAYING = 1;
+    public static final int LISTING_TYPE_TOP_RATED = 2;
+    public static final int LISTING_TYPE_POPULAR = 3;
 }
