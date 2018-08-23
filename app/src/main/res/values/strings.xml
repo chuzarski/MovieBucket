@@ -17,13 +17,13 @@
     <string name="listing_cardview_image_poster_description">Movie Poster</string>
 
     <!--- MENUS -->
-    <!-- Listing nav drawer -->
+    <!-- Listing-->
     <string name="listing_nav_drawer_item_upcoming_string">Upcoming</string>
-    <string name="action_timeframe">Time Frame</string>
-    <string name="action_timeframe_thisweek">This Week</string>
-    <string name="action_timeframe_thismonth">This Month</string>
-    <string name="action_timeframe_nextmonth">Next Month</string>
-    <string name="action_timeframe_nextthree">Next 3 Months</string>
+    <string name="action_listing_opts">Listing</string>
+    <string name="action_set_listing_upcoming">Upcoming</string>
+    <string name="action_set_listing_top_rated">Top Rated</string>
+    <string name="action_set_listing_popular">Popular</string>
+    <string name="action_set_listing_now_playing">Now Playing</string>
     <string name="action_refresh">Refresh</string>
     <string name="listing_item_action_open">Open</string>
     <string name="listing_item_action_share">Share</string>

@@ -1,49 +1,79 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/movie_detail_heading_imageview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="false"
-        android:contentDescription="@string/movie_detail_backdrop_content_description_string"
-        tools:src="/home/cody/AndroidStudioProjects/MovieBucket/design_assets/moviedetailscreen/backdrop.jpg" />
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/title_description_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbarAlwaysDrawVerticalTrack="false"
-        android:scrollbarAlwaysDrawHorizontalTrack="false">
+        android:layout_marginEnd="@dimen/margin_padding_size_small"
+        android:layout_marginStart="@dimen/margin_padding_size_small"
+        android:layout_marginTop="@dimen/margin_padding_size_small"
+        app:cardBackgroundColor="@color/cardview_light_background">
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/margin_padding_size_small"
-            android:layout_marginStart="@dimen/margin_padding_size_small">
-            <LinearLayout
+            android:layout_marginStart="@dimen/margin_padding_size_small"
+            android:layout_marginTop="@dimen/margin_padding_size_small"
+            android:layout_marginBottom="@dimen/margin_padding_size_small"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/movie_detail_fragment_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="@dimen/margin_padding_size_small"
-                android:paddingEnd="@dimen/margin_padding_size_small"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/movie_detail_movie_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_large"
-                    />
-                <TextView
-                    android:id="@+id/movie_detail_movie_summary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/text_size_small"
-                    android:layout_marginTop="@dimen/margin_padding_size_small"
-                    />
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
-    </ScrollView>
-</FrameLayout>
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_large"/>
+
+            <TextView
+                android:id="@+id/movie_detail_fragment_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_padding_size_small"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/release_info_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_padding_size_small"
+        android:layout_marginStart="@dimen/margin_padding_size_small"
+        android:layout_marginTop="@dimen/margin_padding_size_small"
+        android:padding="@dimen/margin_padding_size_small"
+        app:cardBackgroundColor="@color/cardview_light_background">
+
+        <include layout="@layout/card_release_info_layout"/>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/trailers_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_padding_size_small"
+        android:layout_marginStart="@dimen/margin_padding_size_small"
+        android:layout_marginTop="@dimen/margin_padding_size_small"
+        android:padding="@dimen/margin_padding_size_small"
+        app:cardBackgroundColor="@color/cardview_light_background">
+        <LinearLayout
+            android:id="@+id/trailer_card_trailers_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/movie_detail_trailer_heading_string"
+                android:textSize="@dimen/text_size_large" />
+
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

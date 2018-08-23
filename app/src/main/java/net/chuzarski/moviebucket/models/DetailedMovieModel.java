@@ -23,7 +23,7 @@ public class DetailedMovieModel {
     @PrimaryKey
     int id;
 
-    @SerializedName("original_title")
+    @SerializedName("title")
     @ColumnInfo(name = "title")
     private String title;
 
@@ -46,11 +46,18 @@ public class DetailedMovieModel {
     @ColumnInfo(name = "release_date")
     private String releaseDate;
 
+    @SerializedName("runtime")
+    @ColumnInfo(name = "runtime")
+    private int runtime;
+
     @SerializedName("videos")
     private VideoListingModel videoListing;
 
     @SerializedName("belongs_to_collection")
     private CollectionBelongModel collection;
+
+    @SerializedName("genres")
+    private List<GenreModel> genres;
 
     
 
@@ -80,6 +87,14 @@ public class DetailedMovieModel {
 
     public String getBackdropPath() {
         return backdropPath;
+    }
+
+    public List<GenreModel> getGenres() {
+        return genres;
+    }
+
+    public int getRuntime() {
+        return runtime;
     }
 
     public VideoListingModel getVideoListing() { return videoListing; }
@@ -140,5 +155,17 @@ public class DetailedMovieModel {
         public String getName() {
             return name;
         }
+    }
+
+    public class GenreModel {
+
+        @SerializedName("id")
+        private int genreId;
+
+        @SerializedName("name")
+        private String name;
+
+        public String getGenreName() { return name; }
+        public int getGenreId() { return genreId; }
     }
 }

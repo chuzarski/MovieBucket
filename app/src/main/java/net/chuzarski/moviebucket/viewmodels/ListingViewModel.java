@@ -63,6 +63,10 @@ public class ListingViewModel extends AndroidViewModel {
         refresh();
     }
 
+    public void setListingType(int listingType) {
+        repo.setNetworkListingType(listingType);
+    }
+
     public void refresh() {
         Timber.d("Triggering refresh..");
         repo.refresh();

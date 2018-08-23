@@ -3,6 +3,7 @@ package net.chuzarski.moviebucket.network;
 import net.chuzarski.moviebucket.models.CollectionModel;
 import net.chuzarski.moviebucket.models.DiscoverModel;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
+import net.chuzarski.moviebucket.models.ListingResponseModel;
 import net.chuzarski.moviebucket.models.ServiceConfigurationModel;
 
 import retrofit2.Call;
@@ -37,5 +38,21 @@ public interface MovieNetworkService {
 
     @GET("collection/{id}")
     Call<CollectionModel> getCollection(@Path("id") int collectionId);
+
+    @GET("movie/upcoming")
+    Call<ListingResponseModel> getUpcomingListing(@Query("language") String isoLanguage,
+                                                  @Query("region") String isoRegion, @Query("page") int page);
+
+    @GET("movie/top_rated")
+    Call<ListingResponseModel> getTopRatedListing(@Query("language") String isoLanguage,
+                                                  @Query("region") String isoRegion, @Query("page") int page);
+
+    @GET("movie/popular")
+    Call<ListingResponseModel> getPopularListing(@Query("language") String isoLanguage,
+                                                  @Query("region") String isoRegion, @Query("page") int page);
+
+    @GET("movie/now_playing")
+    Call<ListingResponseModel> getNowPlayingListing(@Query("language") String isoLanguage,
+                                                  @Query("region") String isoRegion, @Query("page") int page);
 
 }

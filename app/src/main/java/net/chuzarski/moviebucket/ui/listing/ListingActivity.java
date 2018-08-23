@@ -29,8 +29,6 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         Timber.tag("ListingActivity");
         Timber.d("Activity Created");
 
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         if(savedInstanceState == null) {
             fragment = ListingFragment.newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
@@ -56,17 +54,17 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         switch (item.getItemId()) {
             // TODO This needs to be refactored.. Talk about memory usage?!
             // Wayyy too much object creation
-            case R.id.action_timeframe_thisweek:
-                fragment.setTimeframe(TimeFrame.thisWeek());
+            case R.id.action_set_listing_upcoming:
+                setListingType(StaticValues.LISTING_TYPE_UPCOMING);
                 return true;
-            case R.id.action_timeframe_thismonth:
-                fragment.setTimeframe(TimeFrame.thisMonth());
+            case R.id.action_set_listing_popular:
+                setListingType(StaticValues.LISTING_TYPE_POPULAR);
                 return true;
-            case R.id.action_timeframe_nextmonth:
-                fragment.setTimeframe(TimeFrame.nextMonth());
+            case R.id.action_set_listing_top_rated:
+                setListingType(StaticValues.LISTING_TYPE_TOP_RATED);
                 return true;
-            case R.id.action_timeframe_nextthree:
-                fragment.setTimeframe(TimeFrame.nextThreeMonths());
+            case R.id.action_set_listing_now_playing:
+                setListingType(StaticValues.LISTING_TYPE_NOW_PLAYING);
                 return true;
             case R.id.action_refresh:
                 fragment.refreshList();
@@ -74,6 +72,25 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setListingType(int listingType) {
+        switch (listingType) {
+            case StaticValues.LISTING_TYPE_UPCOMING:
+                getSupportActionBar().setTitle(R.string.action_set_listing_upcoming);
+                break;
+            case StaticValues.LISTING_TYPE_POPULAR:
+                getSupportActionBar().setTitle(R.string.action_set_listing_popular);
+                break;
+            case StaticValues.LISTING_TYPE_NOW_PLAYING:
+                getSupportActionBar().setTitle(R.string.action_set_listing_now_playing);
+                break;
+            case StaticValues.LISTING_TYPE_TOP_RATED:
+                getSupportActionBar().setTitle(R.string.action_set_listing_top_rated);
+                break;
+        }
+
+        fragment.setListingType(listingType);
     }
 
     // listing fragment options
@@ -92,7 +109,7 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     @Override
     public void startMovieDetail(@NonNull int id) {
         Intent detailActivityIntent = new Intent(this, DetailActivity.class);
-        detailActivityIntent.putExtra("movie_id", id);
+        detailActivityIntent.putExtra(StaticValues.BUNDLE_ATTR_MOVIE_ID, id);
         startActivity(detailActivityIntent);
     }
 

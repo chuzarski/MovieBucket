@@ -22,8 +22,8 @@ public class ListingItemModel {
     @ColumnInfo(name = "release_date")
     private String releaseDate;
 
-    @SerializedName("original_title")
-    @ColumnInfo(name = "original_title")
+    @SerializedName("title")
+    @ColumnInfo(name = "title")
     private String title;
 
     @SerializedName("poster_path")

@@ -32,12 +32,6 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
     @BindView(R.id.movie_poster_image)
     public ImageView poster;
 
-    @BindView(R.id.listing_item_action_open)
-    public ImageButton openButton;
-
-    @BindView(R.id.listing_item_action_share)
-    public ImageButton shareButton;
-
     private RequestManager glideRequestManager;
 
     // data for this view
@@ -50,7 +44,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
         ButterKnife.bind(this, itemView);
         glideRequestManager = Glide.with(poster.getContext());
 
-        openButton.setOnClickListener(this);
+        poster.setOnClickListener(this);
     }
 
     public void bind(ListingItemModel movie) {
@@ -71,7 +65,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.listing_item_action_open:
+            case R.id.movie_poster_image:
                 itemInteractor.openMovieDetail(movieId);
                 break;
         }

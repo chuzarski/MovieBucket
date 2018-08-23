@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +15,6 @@ import android.view.ViewGroup;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.common.TimeFrame;
-import net.chuzarski.moviebucket.network.ListingNetworkRequestConfig;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
 
 import org.threeten.bp.LocalDate;
@@ -34,6 +34,7 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
     private ListingViewModel viewModel;
     private ListingPagedListAdapter adapter;
     private LinearLayoutManager layoutManager;
+    private GridLayoutManager gridLayoutManager;
 
     // UI elements
     @BindView(R.id.fragment_movie_roll_recylerview)
@@ -53,6 +54,10 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
 
     public void setTimeframe(TimeFrame time) {
         viewModel.updateTimeFrame(time.getFrom(), time.getTo());
+    }
+
+    public void setListingType(int listingType) {
+        viewModel.setListingType(listingType);
     }
 
     public void setTimeframe(LocalDate from, LocalDate to) {
@@ -100,8 +105,9 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
 
         adapter = new ListingPagedListAdapter(this);
         layoutManager = new LinearLayoutManager(getContext());
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
 
-        movieRecyclerView.setLayoutManager(layoutManager);
+        movieRecyclerView.setLayoutManager(gridLayoutManager);
         movieRecyclerView.setAdapter(adapter);
 
 

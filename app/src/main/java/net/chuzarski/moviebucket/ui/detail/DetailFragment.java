@@ -2,24 +2,24 @@ package net.chuzarski.moviebucket.ui.detail;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.StaticHelpers;
-import net.chuzarski.moviebucket.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.common.MovieImagePathHelper;
+import net.chuzarski.moviebucket.models.DetailedMovieModel;
 import net.chuzarski.moviebucket.viewmodels.DetailViewModel;
 
 import org.w3c.dom.Text;
@@ -31,22 +31,27 @@ import timber.log.Timber;
 
 public class DetailFragment extends Fragment {
 
-    private MovieDetailInteractor mListener;
+    private MovieDetailInteractor detailActivityInteractor;
     private DetailViewModel viewModel;
 
-    //TODO DetailFragment: Figure out what we are going to do with this layout group
-    public LinearLayout trailerGroupLayout;
+    @BindView(R.id.movie_detail_fragment_title)
+    TextView movieTitle;
+    @BindView(R.id.movie_detail_fragment_summary)
+    TextView movieSummary;
 
-    @BindView(R.id.movie_detail_movie_title)
-    public TextView movieTitleTextView;
+    @BindView(R.id.card_release_date_label)
+    TextView movieReleaseDateLabel;
+    @BindView(R.id.card_release_runtime_label)
+    TextView movieRuntimeLabel;
+    @BindView(R.id.card_release_genre_label)
+    TextView movieGenresLabel;
 
-    @BindView(R.id.movie_detail_movie_summary)
-    public TextView movieSummaryTextView;
-
-    @BindView(R.id.movie_detail_heading_imageview)
-    public ImageView movieHeadingImageView;
+    @BindView(R.id.trailer_card_trailers_list)
+    LinearLayout trailersList;
 
     private Unbinder unbinder;
+
+    private boolean hasTrailers = false;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -83,10 +88,10 @@ public class DetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof MovieDetailInteractor) {
-            mListener = (MovieDetailInteractor) context;
+            detailActivityInteractor = (MovieDetailInteractor) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement ListingFragmentInteractor");
+            // TODO show imageview since we aren't loaded into the DetailActivity
+            Timber.i("Loaded into Activity that does not support backdrop in Toolbar");
         }
     }
 
@@ -94,11 +99,13 @@ public class DetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
         viewModel.getMovieModel(getArguments().getInt("MOVIE_ID")).observe(this, model -> { // TODO We blindly make the assumption that this value is in the bundle. This cannot be.);
-            String backdropPath;
-            movieTitleTextView.setText(model.getTitle());
-            movieSummaryTextView.setText(model.getOverview());
+            loadBackdropImage(model.getBackdropPath());
+            movieTitle.setText(model.getTitle());
+            movieSummary.setText(model.getOverview());
 
-            Glide.with(movieHeadingImageView).load(MovieImagePathHelper.createURLForBackdrop(model.getBackdropPath()));
+            displayMovieRelease(model);
+            displayTrailers(model);
+
         });
 
 
@@ -113,22 +120,75 @@ public class DetailFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        detailActivityInteractor = null;
     }
 
+    private void loadBackdropImage(String uri) {
+        if(detailActivityInteractor != null) {
+            detailActivityInteractor.addBackdropToActivity(uri);
+            return;
+        } else {
+            //todo this will load into the backdrop imageview for the fragment
+            return;
+        }
+    }
+
+    private void displayMovieRelease(DetailedMovieModel model) {
+        if(model.getReleaseDate() != null) {
+            movieReleaseDateLabel.setText(model.getReleaseDate());
+        }
+
+        if(model.getRuntime() != 0) {
+            movieRuntimeLabel.setText(String.format("%d minutes", model.getRuntime()));
+        }
+
+        if(model.getGenres() != null) {
+            StringBuilder genreString = new StringBuilder();
+
+            // this could be better
+            for (DetailedMovieModel.GenreModel genre : model.getGenres()) {
+                genreString.append(genre.getGenreName());
+                genreString.append(", ");
+            }
+
+            movieGenresLabel.setText(genreString.toString());
+        }
+    }
+    private void displayTrailers(DetailedMovieModel model) {
+        if(hasTrailers)
+            return;
+
+        for (DetailedMovieModel.VideoModel vidModel : model.getVideoListing().getVideos()) {
+            trailersList.addView(createViewForTrailerList(vidModel));
+        }
+        hasTrailers = true;
+    }
+
+    private View createViewForTrailerList(DetailedMovieModel.VideoModel model) {
+        View itemView = getLayoutInflater().inflate(R.layout.trailer_list_item, null);
+        TextView itemLabel = itemView.findViewById(R.id.trailer_list_item_label);
+        itemLabel.setText("Trailer");
+        itemLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTrailerVideo(model.getVideoKey());
+            }
+        });
+        return itemView;
+    }
+
+    private void openTrailerVideo(String uri) {
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("https://www.youtube.com/watch?v=%s", uri)));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage("com.google.android.youtube");
+        startActivity(intent);
+
+    }
     public interface MovieDetailInteractor {
         // TODO DetailFragment: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void addBackdropToActivity(String uri);
     }
 
-    private Button createTrailerViewButton() {
-        Button viewButton = new Button(getView().getContext());
-        viewButton.setLayoutParams(
-                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT)
-        );
-        viewButton.setText("View Trailer on YouTube");
-
-        return viewButton;
-    }
 }
