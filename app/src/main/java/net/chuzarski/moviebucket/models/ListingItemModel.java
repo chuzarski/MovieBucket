@@ -2,6 +2,7 @@ package net.chuzarski.moviebucket.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
@@ -14,9 +15,13 @@ import com.google.gson.annotations.SerializedName;
 @Entity
 public class ListingItemModel {
 
-    @SerializedName("id")
-    @PrimaryKey
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "entry_id")
+    private int entryId;
+
+    @SerializedName("movieId")
+    @ColumnInfo(name = "movie_id")
+    private int movieId;
 
     @SerializedName("release_date")
     @ColumnInfo(name = "release_date")
@@ -34,8 +39,8 @@ public class ListingItemModel {
     @ColumnInfo(name = "adult")
     private boolean adult;
 
-    public int getId() {
-        return id;
+    public int getMovieId() {
+        return movieId;
     }
 
     public String getReleaseDate() {
@@ -54,8 +59,8 @@ public class ListingItemModel {
         return adult;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMovieId(int movieId) {
+        this.movieId = movieId;
     }
 
     public void setReleaseDate(String releaseDate) {
@@ -74,4 +79,11 @@ public class ListingItemModel {
         this.adult = adult;
     }
 
+    public int getEntryId() {
+        return entryId;
+    }
+
+    public void setEntryId(int entryId) {
+        this.entryId = entryId;
+    }
 }

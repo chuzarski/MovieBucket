@@ -28,7 +28,7 @@ public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, 
 
         @Override
         public boolean areContentsTheSame(ListingItemModel oldItem, ListingItemModel newItem) {
-            return (oldItem.getId() == newItem.getId());
+            return (oldItem.getEntryId() == newItem.getEntryId());
         }
     };
 

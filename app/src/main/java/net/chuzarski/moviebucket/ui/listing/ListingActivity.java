@@ -1,10 +1,6 @@
 package net.chuzarski.moviebucket.ui.listing;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -27,47 +23,55 @@ import timber.log.Timber;
 
 public class ListingActivity extends AppCompatActivity implements ListingFragment.ListingFragmentInteractor {
 
+    // constants
     public static final String FRAGMENT_KEY = "FRAG_LISTING";
+    public static final String MOVIE_FEED_KEY = "MOVIE_FEED_TYPE";
 
-    ListingActivityViewModel viewModel;
-
+    // UI references
     ListingFragment fragment;
     @BindView(R.id.listing_activity_toolbar)
     Toolbar activityToolbar;
     @BindView(R.id.listing_feed_spinner)
-    Spinner toolbarSpinner;
+    Spinner movieFeedSpinner;
 
-    Observer<Integer> feedStateObserver = feedType -> {
-        if(fragment != null) {
-            fragment.setListingType(feedType);
-        }
-    };
+    // state
+    private int movieFeedType;
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Activity callbacks
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_roll);
         Timber.tag("ListingActivity");
         Timber.d("Activity Created");
-        viewModel = ViewModelProviders.of(this).get(ListingActivityViewModel.class);
 
         ButterKnife.bind(this);
-        setupDefaultToolbar();
-        setupToolbarSpinner();
 
+        //todo this is probably a good spot to set UI defaults based on user prefs
         if(savedInstanceState == null) {
+            Timber.d("Saved Instance missing..");
             fragment = ListingFragment.newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
         } else {
             fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY);
+            movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY, 0); //todo possibly set this to default user vaule?
         }
 
-        viewModel.getListingFeedState().observe(this, feedStateObserver);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setupDefaultToolbar();
+        setupMovieFeedSpinner();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         getSupportFragmentManager().putFragment(outState, FRAGMENT_KEY, fragment);
+        outState.putInt(MOVIE_FEED_KEY, movieFeedType);
         super.onSaveInstanceState(outState);
     }
 
@@ -80,20 +84,6 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // TODO This needs to be refactored.. Talk about memory usage?!
-            // Wayyy too much object creation
-            case R.id.action_set_listing_upcoming:
-                setListingType(StaticValues.LISTING_TYPE_UPCOMING);
-                return true;
-            case R.id.action_set_listing_popular:
-                setListingType(StaticValues.LISTING_TYPE_POPULAR);
-                return true;
-            case R.id.action_set_listing_top_rated:
-                setListingType(StaticValues.LISTING_TYPE_TOP_RATED);
-                return true;
-            case R.id.action_set_listing_now_playing:
-                setListingType(StaticValues.LISTING_TYPE_NOW_PLAYING);
-                return true;
             case R.id.action_refresh:
                 fragment.refreshList();
                 return true;
@@ -102,25 +92,9 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         }
     }
 
-    public void setListingType(int listingType) {
-        switch (listingType) {
-            case StaticValues.LISTING_TYPE_UPCOMING:
-                getSupportActionBar().setTitle(R.string.action_set_listing_upcoming);
-                break;
-            case StaticValues.LISTING_TYPE_POPULAR:
-                getSupportActionBar().setTitle(R.string.action_set_listing_popular);
-                break;
-            case StaticValues.LISTING_TYPE_NOW_PLAYING:
-                getSupportActionBar().setTitle(R.string.action_set_listing_now_playing);
-                break;
-            case StaticValues.LISTING_TYPE_TOP_RATED:
-                getSupportActionBar().setTitle(R.string.action_set_listing_top_rated);
-                break;
-        }
-
-        fragment.setListingType(listingType);
-    }
-
+    ///////////////////////////////////////////////////////////////////////////
+    // UI Setup functions
+    ///////////////////////////////////////////////////////////////////////////
     private void setupDefaultToolbar() {
         setSupportActionBar(activityToolbar);
         // spinner needs to be setup
@@ -129,14 +103,22 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         }
     }
 
-    private void setupToolbarSpinner() {
+    private void setupMovieFeedSpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.movie_feeds, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        toolbarSpinner.setAdapter(adapter);
-        toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        movieFeedSpinner.setAdapter(adapter);
+        movieFeedSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            private boolean allowSelections = false;
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                viewModel.setListingFeedState(position);
+                movieFeedType = position;
+                if(allowSelections) {
+                    fragment.setListingType(movieFeedType);
+                    fragment.refreshList();
+                } else {
+                    allowSelections = true;
+                }
             }
 
             @Override
@@ -146,7 +128,9 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         });
     }
 
-    // listing fragment options
+    ///////////////////////////////////////////////////////////////////////////
+    // ListingFragmentInteractor interface implementation
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void disableReloadAction() {
         // TODO implement
@@ -164,22 +148,5 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         Intent detailActivityIntent = new Intent(this, DetailActivity.class);
         detailActivityIntent.putExtra(StaticValues.BUNDLE_ATTR_MOVIE_ID, id);
         startActivity(detailActivityIntent);
-    }
-
-    public static class ListingActivityViewModel extends ViewModel {
-        private MutableLiveData<Integer> listingFeedState;
-
-        public ListingActivityViewModel() {
-            listingFeedState = new MutableLiveData();
-        }
-
-        public LiveData<Integer> getListingFeedState() {
-            return listingFeedState;
-        }
-
-        public void setListingFeedState(int val) {
-            Timber.d("Posting value: %d", val);
-            listingFeedState.postValue(val);
-        }
     }
  }

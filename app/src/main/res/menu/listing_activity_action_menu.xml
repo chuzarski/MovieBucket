@@ -7,24 +7,4 @@
         android:icon="@drawable/ic_refresh"
         android:title="@string/action_refresh"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/listing_activity_action_listing_menu"
-        android:icon="@drawable/ic_time"
-        android:title="@string/action_listing_opts"
-        app:showAsAction="always">
-        <menu >
-            <item
-                android:id="@+id/action_set_listing_upcoming"
-                android:title="@string/action_set_listing_upcoming" />
-            <item
-                android:id="@+id/action_set_listing_top_rated"
-                android:title="@string/action_set_listing_top_rated" />
-            <item
-                android:id="@+id/action_set_listing_popular"
-                android:title="@string/action_set_listing_popular" />
-            <item
-                android:id="@+id/action_set_listing_now_playing"
-                android:title="@string/action_set_listing_now_playing" />
-        </menu>
-    </item>
 </menu>

@@ -24,7 +24,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
 
-public class ListingFragment extends Fragment implements ListingItemInteractor {
+public class
+ListingFragment extends Fragment implements ListingItemInteractor {
 
 
     private ListingFragmentInteractor mListener;
@@ -52,16 +53,8 @@ public class ListingFragment extends Fragment implements ListingItemInteractor {
     // Fragment specific
     ///////////////////////////////////////////////////////////////////////////
 
-    public void setTimeframe(TimeFrame time) {
-        viewModel.updateTimeFrame(time.getFrom(), time.getTo());
-    }
-
     public void setListingType(int listingType) {
         viewModel.setListingType(listingType);
-    }
-
-    public void setTimeframe(LocalDate from, LocalDate to) {
-        viewModel.updateTimeFrame(from, to);
     }
 
     public void refreshList() {

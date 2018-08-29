@@ -2,7 +2,6 @@ package net.chuzarski.moviebucket.ui.listing;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,8 +14,6 @@ import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
-import timber.log.Timber;
 
 /**
  * Created by cody on 3/21/18.
@@ -55,7 +52,7 @@ public class ListingViewHolder extends RecyclerView.ViewHolder implements View.O
         glideRequestManager.load(MovieImagePathHelper.createURLForBackdrop(movie.getPosterImagePath())).into(poster);
 
 
-        movieId = movie.getId();
+        movieId = movie.getMovieId();
     }
 
     public void unbind() {
