@@ -19,7 +19,7 @@ public class ListingItemModel {
     @ColumnInfo(name = "entry_id")
     private int entryId;
 
-    @SerializedName("movieId")
+    @SerializedName("id")
     @ColumnInfo(name = "movie_id")
     private int movieId;
 

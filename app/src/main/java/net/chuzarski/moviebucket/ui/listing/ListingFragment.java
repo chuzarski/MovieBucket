@@ -10,14 +10,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.LoadState;
-import net.chuzarski.moviebucket.common.TimeFrame;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
 
-import org.threeten.bp.LocalDate;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,8 +36,8 @@ ListingFragment extends Fragment implements ListingItemInteractor {
 
     private ListingViewModel viewModel;
     private ListingPagedListAdapter adapter;
-    private LinearLayoutManager layoutManager;
     private GridLayoutManager gridLayoutManager;
+    private RequestManager glideRequestManager;
 
     // UI elements
     @BindView(R.id.fragment_movie_roll_recylerview)
@@ -82,6 +84,7 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         Timber.tag("ListingFragment");
 
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
+        glideRequestManager = Glide.with(this);
     }
 
     @Override
@@ -96,13 +99,12 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     public void onStart() {
         super.onStart();
 
-        adapter = new ListingPagedListAdapter(this);
-        layoutManager = new LinearLayoutManager(getContext());
+        adapter = new ListingPagedListAdapter(this, glideRequestManager);
         gridLayoutManager = new GridLayoutManager(getContext(), 2);
+
 
         movieRecyclerView.setLayoutManager(gridLayoutManager);
         movieRecyclerView.setAdapter(adapter);
-
 
         viewModel.getMovieList().observe(this, list -> {
             adapter.submitList(list);
@@ -129,6 +131,8 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         super.onDetach();
         mListener = null;
     }
+
+
 
     ///////////////////////////////////////////////////////////////////////////
     // List item interaction
