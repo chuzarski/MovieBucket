@@ -58,7 +58,6 @@ public class ListingRepository {
 
     public LiveData<PagedList<ListingItemModel>> getMovieListing() {
         Config listConfig = new Config.Builder()
-                .setEnablePlaceholders(true)
                 .setPageSize(StaticValues.listingPageSize)
                 .setPrefetchDistance(StaticValues.listingPrefetchDistance)
                 .build();

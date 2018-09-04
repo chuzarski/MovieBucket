@@ -1,6 +1,5 @@
 package net.chuzarski.moviebucket.ui.listing;
 
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -49,9 +50,7 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
 
         ButterKnife.bind(this);
 
-        //todo this is probably a good spot to set UI defaults based on user prefs
         if(savedInstanceState == null) {
-            Timber.d("Saved Instance missing..");
             fragment = ListingFragment.newInstance();
             getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
         } else {
@@ -59,13 +58,19 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
             movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY, 0); //todo possibly set this to default user vaule?
         }
 
+        initDefaultToolbar();
+        initFeedSpinner();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        setupDefaultToolbar();
-        setupMovieFeedSpinner();
+    protected void onResume() {
+        super.onResume();
+        movieFeedSpinner.setOnItemSelectedListener(feedSelectionListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -95,7 +100,7 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     ///////////////////////////////////////////////////////////////////////////
     // UI Setup functions
     ///////////////////////////////////////////////////////////////////////////
-    private void setupDefaultToolbar() {
+    private void initDefaultToolbar() {
         setSupportActionBar(activityToolbar);
         // spinner needs to be setup
         if(getSupportActionBar() != null) {
@@ -103,30 +108,34 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         }
     }
 
-    private void setupMovieFeedSpinner() {
+    private void initFeedSpinner() {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.movie_feeds, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         movieFeedSpinner.setAdapter(adapter);
-        movieFeedSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            private boolean allowSelections = false;
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                movieFeedType = position;
-                if(allowSelections) {
-                    fragment.setListingType(movieFeedType);
-                    fragment.refreshList();
-                } else {
-                    allowSelections = true;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // UI Listeners
+    ///////////////////////////////////////////////////////////////////////////
+
+    OnItemSelectedListener feedSelectionListener = new OnItemSelectedListener() {
+        private boolean allowSelections = false;
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            movieFeedType = position;
+            if(allowSelections) {
+                fragment.setListingType(movieFeedType);
+                fragment.refreshList();
+            } else {
+                allowSelections = true;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // ListingFragmentInteractor interface implementation

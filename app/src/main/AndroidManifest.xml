@@ -24,10 +24,6 @@
         <activity android:name=".ui.detail.DetailActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:parentActivityName=".ui.listing.ListingActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.RUN"/>
-                <category android:name="android.intent.category.DEVELOPMENT_PREFERENCE"/>
-            </intent-filter>
         </activity>
 
     </application>

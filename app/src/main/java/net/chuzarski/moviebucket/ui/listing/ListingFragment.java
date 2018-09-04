@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
@@ -33,7 +31,6 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     private ListingFragmentInteractor mListener;
     private Unbinder unbinder;
 
-
     private ListingViewModel viewModel;
     private ListingPagedListAdapter adapter;
     private GridLayoutManager gridLayoutManager;
@@ -42,6 +39,8 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     // UI elements
     @BindView(R.id.fragment_movie_roll_recylerview)
     public RecyclerView movieRecyclerView;
+
+    public static final String KEY_LIST_POSITION = "LIST_POSITION";
 
     public ListingFragment() {
         // Required empty public constructor
@@ -92,19 +91,23 @@ ListingFragment extends Fragment implements ListingItemInteractor {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_roll, container, false);
         unbinder = ButterKnife.bind(this, view);
+
+        adapter = new ListingPagedListAdapter(this, glideRequestManager);
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        movieRecyclerView.setLayoutManager(gridLayoutManager);
+        movieRecyclerView.setAdapter(adapter);
+
+        if (savedInstanceState != null) {
+            movieRecyclerView.getLayoutManager()
+                    .onRestoreInstanceState(savedInstanceState.getParcelable(KEY_LIST_POSITION));
+        }
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        adapter = new ListingPagedListAdapter(this, glideRequestManager);
-        gridLayoutManager = new GridLayoutManager(getContext(), 2);
-
-
-        movieRecyclerView.setLayoutManager(gridLayoutManager);
-        movieRecyclerView.setAdapter(adapter);
 
         viewModel.getMovieList().observe(this, list -> {
             adapter.submitList(list);
@@ -121,6 +124,13 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable(KEY_LIST_POSITION,
+                movieRecyclerView.getLayoutManager().onSaveInstanceState());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
@@ -132,6 +142,10 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         mListener = null;
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Utility methods
+    ///////////////////////////////////////////////////////////////////////////
 
 
     ///////////////////////////////////////////////////////////////////////////
