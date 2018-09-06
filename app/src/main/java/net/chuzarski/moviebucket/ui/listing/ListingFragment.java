@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.LoadState;
+import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.viewmodels.ListingViewModel;
 
 
@@ -55,7 +55,7 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     ///////////////////////////////////////////////////////////////////////////
 
     public void setListingType(int listingType) {
-        viewModel.setListingType(listingType);
+        viewModel.setFeed(listingType);
     }
 
     public void refreshList() {
@@ -109,15 +109,15 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     public void onStart() {
         super.onStart();
 
-        viewModel.getMovieList().observe(this, list -> {
+        viewModel.getPagedListing().observe(this, list -> {
             adapter.submitList(list);
         });
 
         viewModel.getLoadState().observe(this, networkState -> {
 
-            if(networkState == LoadState.LOADING) {
+            if(networkState == StaticValues.LOAD_STATE_LOADING) {
                 mListener.disableReloadAction();
-            } else if (networkState == LoadState.LOADED){
+            } else if (networkState == StaticValues.LOAD_STATE_LOADED){
                 mListener.enabledReloadAction();
             }
         });

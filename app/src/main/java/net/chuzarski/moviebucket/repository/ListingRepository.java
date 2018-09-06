@@ -11,7 +11,6 @@ import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
-import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 
 import java.util.List;
@@ -28,19 +27,25 @@ import timber.log.Timber;
 
 public class ListingRepository {
 
-    private MutableLiveData<LoadState> loadState;
+    private MutableLiveData<Integer> loadState;
     private MovieNetworkService networkService;
     private ListingCacheDb db;
     private Executor ioExectuor;
     private ListingBoundaryNetworkLoader networkLoader;
 
-    private int movieListingType = StaticValues.LISTING_TYPE_UPCOMING; // hard default
+    private int movieListingType = StaticValues.FEED_TYPE_UPCOMING; // hard default
+
+    private Config listConfig = new Config.Builder()
+            .setPageSize(StaticValues.listingPageSize)
+            .setPrefetchDistance(StaticValues.listingPrefetchDistance)
+            .build();
+
 
     public ListingRepository(MovieNetworkService networkService, ListingCacheDb db, Executor ioExecutor) {
         Timber.tag("ListingRepository");
 
         loadState = new MutableLiveData<>();
-        loadState.postValue(LoadState.LOADING);
+        loadState.postValue(StaticValues.LOAD_STATE_LOADING);
 
         this.networkService = networkService;
         this.db = db;
@@ -49,26 +54,20 @@ public class ListingRepository {
         // todo fix isoLanguage and isoRegion defaults
         networkLoader = new ListingBoundaryNetworkLoader("en", "US");
 
-        Timber.d("Ready to work");
     }
 
-    public LiveData<LoadState> getLoadState() {
+    public LiveData<Integer> getLoadState() {
         return loadState;
     }
 
-    public LiveData<PagedList<ListingItemModel>> getMovieListing() {
-        Config listConfig = new Config.Builder()
-                .setPageSize(StaticValues.listingPageSize)
-                .setPrefetchDistance(StaticValues.listingPrefetchDistance)
-                .build();
-
+    public LiveData<PagedList<ListingItemModel>> getFreshListing() {
         return new LivePagedListBuilder<Integer, ListingItemModel>(db.listingDao().getAllDataSource(), listConfig)
                 .setFetchExecutor(ioExectuor)
                 .setBoundaryCallback(networkLoader)
                 .build();
     }
 
-    public void setListingType(int type) {
+    public void setFeed(int type) {
         movieListingType = type;
     }
 
@@ -103,12 +102,13 @@ public class ListingRepository {
                 asyncInsertAllIntoListingCache(response.body().getItems());
                 totalPages = response.body().getTotalPages();
                 page = response.body().getPage();
-                loadState.postValue(LoadState.LOADED);
+                loadState.postValue(StaticValues.LOAD_STATE_LOADING);
             }
 
             @Override
             public void onFailure(Call<ListingResponseModel> call, Throwable t) {
                 Timber.w("We had a loading failure");
+                loadState.postValue(StaticValues.LOAD_STATE_FAILED);
             }
         };
 
@@ -124,7 +124,7 @@ public class ListingRepository {
         @Override
         public void onZeroItemsLoaded() {
             super.onZeroItemsLoaded();
-            loadState.postValue(LoadState.LOADING);
+            loadState.postValue(StaticValues.LOAD_STATE_LOADING);
             page = 1;
             dispatchLoadingMethod();
         }
@@ -146,16 +146,16 @@ public class ListingRepository {
 
         private void dispatchLoadingMethod() {
             switch (movieListingType) {
-                case StaticValues.LISTING_TYPE_UPCOMING:
+                case StaticValues.FEED_TYPE_UPCOMING:
                     networkService.getUpcomingListing(language, region, page).enqueue(responseCallback);
                     break;
-                case StaticValues.LISTING_TYPE_POPULAR:
+                case StaticValues.FEED_TYPE_POPULAR:
                     networkService.getPopularListing(language, region, page).enqueue(responseCallback);
                     break;
-                case StaticValues.LISTING_TYPE_NOW_PLAYING:
+                case StaticValues.FEED_TYPE_NOW_PLAYING:
                     networkService.getNowPlayingListing(language, region, page).enqueue(responseCallback);
                     break;
-                case StaticValues.LISTING_TYPE_TOP_RATED:
+                case StaticValues.FEED_TYPE_TOP_RATED:
                     networkService.getTopRatedListing(language, region, page).enqueue(responseCallback);
                     break;
             }

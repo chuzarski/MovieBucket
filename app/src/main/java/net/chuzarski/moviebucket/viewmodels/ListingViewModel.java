@@ -8,9 +8,9 @@ import android.arch.persistence.room.Room;
 import android.support.annotation.NonNull;
 
 import net.chuzarski.moviebucket.BucketApplication;
+import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
-import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.network.ListingNetworkRequestConfig;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 import net.chuzarski.moviebucket.repository.ListingRepository;
@@ -23,9 +23,10 @@ import timber.log.Timber;
 
 public class ListingViewModel extends AndroidViewModel {
 
-    private LiveData<PagedList<ListingItemModel>> movieList;
+    private LiveData<PagedList<ListingItemModel>> pagedListing;
     private ListingRepository repo;
-    private ListingNetworkRequestConfig networkRequestConfig;
+    private int listingType = StaticValues.LISTING_TYPE_FRESH; // hard default
+    private int currentListingType = listingType;
 
     public ListingViewModel(@NonNull Application app) {
         super(app);
@@ -37,8 +38,8 @@ public class ListingViewModel extends AndroidViewModel {
 
     }
 
-    public void setListingType(int listingType) {
-        repo.setListingType(listingType);
+    public void setFeed(int feedType) {
+        repo.setFeed(feedType);
     }
 
     public void refresh() {
@@ -46,16 +47,20 @@ public class ListingViewModel extends AndroidViewModel {
         repo.refresh();
     }
 
+    public void setListingType(int listingType) {
+        this.listingType = listingType;
+    }
 
-    public LiveData<PagedList<ListingItemModel>> getMovieList() {
-        if(movieList == null) {
-            movieList = repo.getMovieListing();
+    public LiveData<PagedList<ListingItemModel>> getPagedListing() {
+        if(pagedListing == null) {
+          pagedListing = repo.getFreshListing();
         }
 
-        return movieList;
+        return pagedListing;
     }
 
-    public LiveData<LoadState> getLoadState() {
+    public LiveData<Integer> getLoadState() {
         return repo.getLoadState();
     }
+
 }
