@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
+
+import static net.chuzarski.moviebucket.R.id.trailer_list_view;
+import static net.chuzarski.moviebucket.models.DetailedMovieModel.*;
 
 public class DetailFragment extends Fragment {
 
@@ -154,6 +158,9 @@ public class DetailFragment extends Fragment {
             movieGenresLabel.setText(genreString.toString());
         }
     }
+
+    // TODO replace with ListView
+    // call invalidate on parent view to force re-draw
     private void displayTrailers(DetailedMovieModel model) {
         if(hasTrailers)
             return;
@@ -176,6 +183,7 @@ public class DetailFragment extends Fragment {
         });
         return itemView;
     }
+
 
     private void openTrailerVideo(String uri) {
 

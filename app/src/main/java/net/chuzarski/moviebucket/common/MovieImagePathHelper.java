@@ -36,6 +36,7 @@ public class MovieImagePathHelper {
 
     public static String createURLForBackdrop(String path) {
         // TODO refactor this to do a better job at checking for escaped slashes and obviously dynamic image sizes.
+        // See https://developer.android.com/reference/android/net/Uri.Builder
         return backdropUrlBase + backdropDefaultSize + path;
     }
 
