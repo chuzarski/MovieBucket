@@ -1,4 +1,4 @@
-package net.chuzarski.moviebucket.viewmodels;
+package net.chuzarski.moviebucket.ui.detail;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;

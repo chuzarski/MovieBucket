@@ -21,10 +21,13 @@ import butterknife.ButterKnife;
 
 public class ListingViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.movie_item_title)
+    @BindView(R.id.listing_title)
     public TextView title;
 
-    @BindView(R.id.movie_poster_image)
+    @BindView(R.id.listing_release_date)
+    public TextView releaseDate;
+
+    @BindView(R.id.listing_poster)
     public ImageView poster;
 
     public ListingViewHolder(View itemView) {

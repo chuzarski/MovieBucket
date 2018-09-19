@@ -5,33 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
-import net.chuzarski.moviebucket.viewmodels.DetailViewModel;
-
-import org.w3c.dom.Text;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
-
-import static net.chuzarski.moviebucket.R.id.trailer_list_view;
-import static net.chuzarski.moviebucket.models.DetailedMovieModel.*;
 
 public class DetailFragment extends Fragment {
 

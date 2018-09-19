@@ -50,7 +50,7 @@ public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, 
     @NonNull
     @Override
     public ListingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_item_view, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.listing_item_view, parent, false);
         return new ListingViewHolder(view);
     }
 
@@ -60,6 +60,7 @@ public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, 
 
         if(movieItem != null) {
             holder.title.setText(movieItem.getTitle());
+            holder.releaseDate.setText(movieItem.getReleaseDate());
             glide.load(MovieImagePathHelper.createURLForBackdrop(movieItem.getPosterImagePath()))
                     .apply(new RequestOptions().placeholder(new ColorDrawable(Color.RED)))
                     .into(holder.poster);

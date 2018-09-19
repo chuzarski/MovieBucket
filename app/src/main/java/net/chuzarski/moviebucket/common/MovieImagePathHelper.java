@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class MovieImagePathHelper {
 
-    private static String backdropDefaultSize = "original";
+    private static String backdropDefaultSize = "w500";
     private static String backdropUrlBase = "https://image.tmdb.org/t/p/";
 
 
