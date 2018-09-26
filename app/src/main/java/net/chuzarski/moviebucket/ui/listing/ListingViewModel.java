@@ -4,12 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.PagedList;
 
-import net.chuzarski.moviebucket.BucketApplication;
-import net.chuzarski.moviebucket.common.FeedListingCriteria;
-import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
-import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
+import net.chuzarski.moviebucket.common.InternetListingCriteria;
 import net.chuzarski.moviebucket.models.ListingItemModel;
-import net.chuzarski.moviebucket.repository.FeedListingRepository;
 import net.chuzarski.moviebucket.repository.ListingRepository;
 
 import timber.log.Timber;
@@ -22,6 +18,11 @@ public class ListingViewModel extends ViewModel {
 
     private LiveData<PagedList<ListingItemModel>> pagedListing;
     private ListingRepository repo;
+    private InternetListingCriteria internetListingCriteria;
+
+    public ListingViewModel() {
+        internetListingCriteria = new InternetListingCriteria();
+    }
 
     public void refresh() {
         Timber.d("Triggering refresh..");
@@ -49,5 +50,9 @@ public class ListingViewModel extends ViewModel {
 
     public ListingRepository getRepository() {
         return repo;
+    }
+
+    public InternetListingCriteria getInternetListingCriteria() {
+        return internetListingCriteria;
     }
 }

@@ -7,7 +7,7 @@ import android.arch.paging.PagedList;
 import android.arch.paging.PagedList.Config;
 import android.support.annotation.NonNull;
 
-import net.chuzarski.moviebucket.common.FeedListingCriteria;
+import net.chuzarski.moviebucket.common.InternetListingCriteria;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
@@ -35,7 +35,7 @@ public class FeedListingRepository implements ListingRepository, Observer {
     private ListingCacheDb db;
     private Executor ioExectuor;
     private ListingBoundaryNetworkLoader networkLoader;
-    private FeedListingCriteria listingCriteria;
+    private InternetListingCriteria listingCriteria;
 
     private Config listConfig = new Config.Builder()
             .setPageSize(StaticValues.listingPageSize)
@@ -44,7 +44,7 @@ public class FeedListingRepository implements ListingRepository, Observer {
 
 
     public FeedListingRepository(MovieNetworkService networkService, ListingCacheDb db,
-                                 Executor ioExecutor, FeedListingCriteria criteria) {
+                                 Executor ioExecutor, InternetListingCriteria criteria) {
 
         loadState = new MutableLiveData<>();
         loadState.postValue(StaticValues.LOAD_STATE_LOADING);
@@ -152,16 +152,31 @@ public class FeedListingRepository implements ListingRepository, Observer {
         private void dispatchLoadingMethod() {
             switch (listingCriteria.getFeedType()) {
                 case StaticValues.INTERNET_LISTING_UPCOMING:
-                    networkService.getUpcomingListing(language, region, page).enqueue(responseCallback);
+                    networkService.getUpcomingListing(listingCriteria.getIsoLanguage(),
+                            listingCriteria.getIsoRegion(), page)
+                            .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_POPULAR:
-                    networkService.getPopularListing(language, region, page).enqueue(responseCallback);
+                    networkService.getPopularListing(listingCriteria.getIsoLanguage(),
+                            listingCriteria.getIsoRegion(), page)
+                            .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_NOW_PLAYING:
-                    networkService.getNowPlayingListing(language, region, page).enqueue(responseCallback);
+                    networkService.getNowPlayingListing(listingCriteria.getIsoLanguage(),
+                            listingCriteria.getIsoRegion(), page)
+                            .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_TOP_RATED:
-                    networkService.getTopRatedListing(language, region, page).enqueue(responseCallback);
+                    networkService.getTopRatedListing(listingCriteria.getIsoLanguage(),
+                            listingCriteria.getIsoRegion(), page)
+                            .enqueue(responseCallback);
+                    break;
+                case StaticValues.INTERNET_LISTING_SEARCH:
+                    networkService.getSearchListing(listingCriteria.getSearchQuery(),
+                            listingCriteria.getIsoLanguage(),
+                            listingCriteria.getIsoRegion(),
+                            page)
+                    .enqueue(responseCallback);
                     break;
             }
         }

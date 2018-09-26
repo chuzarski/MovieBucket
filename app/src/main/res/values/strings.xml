@@ -25,6 +25,7 @@
     <string name="action_set_listing_popular">Popular</string>
     <string name="action_set_listing_now_playing">Now Playing</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_search">Search</string>
     <string name="listing_item_action_open">Open</string>
     <string name="listing_item_action_share">Share</string>
     
@@ -34,4 +35,7 @@
         <item>Top Rated</item>
         <item>Popular</item>
     </string-array>
+
+    <!-- Searching -->
+    <string name="search_hint">Movie Title</string>
 </resources>

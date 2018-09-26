@@ -20,8 +20,7 @@ import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.FeedListingCriteria;
-import net.chuzarski.moviebucket.common.StaticHelpers;
+import net.chuzarski.moviebucket.common.InternetListingCriteria;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
@@ -42,6 +41,10 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     private ListingViewModel viewModel;
     private ListingPagedListAdapter adapter;
     private RequestManager glideRequestManager;
+
+    // instance
+    private boolean searchableListing = false;
+    private String searchQuery;
 
     // UI elements
     @BindView(R.id.fragment_movie_roll_recylerview)
@@ -153,6 +156,7 @@ ListingFragment extends Fragment implements ListingItemInteractor {
 
         if(viewModel.getRepository() == null) {
             // view model is not ready, needs some settin!
+            initDefaultListingCriteria();
             dispatchRepositoryConfiguration();
         }
     }
@@ -168,9 +172,22 @@ ListingFragment extends Fragment implements ListingItemInteractor {
                         ListingCacheDb.class)
                         .build(),
                 BucketApplication.getIoExectuor(),
-                hostInteractor.getInternetListingCriteria()));
+                viewModel.getInternetListingCriteria()));
     }
 
+    private void initDefaultListingCriteria() {
+        //todo good place to set listing defaults based on user preferences
+        if(viewModel.getInternetListingCriteria() != null) {
+            if(searchableListing) {
+                viewModel.getInternetListingCriteria().setFeedType(StaticValues.INTERNET_LISTING_SEARCH);
+                viewModel.getInternetListingCriteria().setSearchQuery(searchQuery);
+            } else {
+                viewModel.getInternetListingCriteria().setFeedType(StaticValues.INTERNET_LISTING_UPCOMING);
+            }
+            viewModel.getInternetListingCriteria().setIsoLanguage("en");
+            viewModel.getInternetListingCriteria().setIsoRegion("US");
+        }
+    }
     ///////////////////////////////////////////////////////////////////////////
     // Observers
     ///////////////////////////////////////////////////////////////////////////
@@ -200,6 +217,14 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         hostInteractor.startMovieDetail(id);
     }
 
+    public InternetListingCriteria getInternetListingCriteria() {
+        return viewModel.getInternetListingCriteria();
+    }
+
+    public void setSearchQuery(String query) {
+        searchableListing = true;
+        searchQuery = query;
+    }
     public interface ListingFragmentInteractor {
         // TODO add interface for fragment interaction
         void disableReloadAction();
@@ -207,8 +232,5 @@ ListingFragment extends Fragment implements ListingItemInteractor {
 
         // opening movies
         void startMovieDetail(@NonNull int id);
-
-        // house keeping
-        FeedListingCriteria getInternetListingCriteria();
     }
 }

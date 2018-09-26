@@ -1,7 +1,9 @@
 package net.chuzarski.moviebucket.ui.listing;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.app.SearchManager;
+import android.arch.persistence.room.PrimaryKey;
 import android.content.Intent;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.FeedListingCriteria;
+import net.chuzarski.moviebucket.common.RecentMovieSuggestionProvider;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.ui.detail.DetailActivity;
 
@@ -26,7 +28,11 @@ import timber.log.Timber;
 public class ListingActivity extends AppCompatActivity implements ListingFragment.ListingFragmentInteractor {
 
     // constants
-    public static final String FRAGMENT_KEY = "FRAG_LISTING";
+    public static final String FRAGMENT_KEY_CURRENT = "FRAG_CURRENT";
+    public static final String FRAGMENT_KEY_INTERNET_LISTING = "FRAG_ILISTING";
+    public static final String FRAGMENT_KEY_SEARCH = "FRAG_SEARCH";
+    public static final String FRAGMENT_SAVED = "FRAG_SAVED";
+
     public static final String MOVIE_FEED_KEY = "MOVIE_FEED_TYPE";
 
     // UI references
@@ -38,13 +44,15 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
 
     // state
     private int movieFeedType;
-    ListingActivityViewModel viewModel;
 
     ///////////////////////////////////////////////////////////////////////////
     // Activity callbacks
     ///////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SearchRecentSuggestions searchSuggestions;
+        String searchQuery;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_roll);
         Timber.tag("ListingActivity");
@@ -52,17 +60,24 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
 
         ButterKnife.bind(this);
 
-        viewModel = ViewModelProviders.of(this).get(ListingActivityViewModel.class);
-
         if(savedInstanceState == null) {
             fragment = ListingFragment.newInstance();
+            if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+                searchQuery = getIntent().getStringExtra(SearchManager.QUERY);
+                fragment.setSearchQuery(searchQuery);
+                searchSuggestions = new SearchRecentSuggestions(this,
+                        RecentMovieSuggestionProvider.AUTHORITY,
+                        RecentMovieSuggestionProvider.MODE);
+                searchSuggestions.saveRecentQuery(searchQuery, null);
+            }
+
             getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
         } else {
-            fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY);
+            fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY_CURRENT);
             movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY, 0); //todo possibly set this to default user vaule?
         }
 
-        configureListingType();
+        setupInitialListing();
 
         initDefaultToolbar();
     }
@@ -80,7 +95,7 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        getSupportFragmentManager().putFragment(outState, FRAGMENT_KEY, fragment);
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_KEY_CURRENT, fragment);
         outState.putInt(MOVIE_FEED_KEY, movieFeedType);
         super.onSaveInstanceState(outState);
     }
@@ -97,32 +112,42 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
             case R.id.action_refresh:
                 fragment.refreshList();
                 return true;
+            case R.id.action_search:
+                onSearchRequested();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Internal Config functions
+    // Internal setup functions
     ///////////////////////////////////////////////////////////////////////////
 
-    private void configureListingType() {
-        configInternetListing();
+    /**
+     * This method decides what kind of listing this activity will be
+     * i.e. is the activity being opened on fresh start, saved movies, search?
+     */
+    private void setupInitialListing() {
+        initInternetListingUI();
     }
-    private void configInternetListing() {
-        initFeedSpinner();
-        if (viewModel.getFeedListingCriteria() == null) {
-            FeedListingCriteria criteria = new FeedListingCriteria();
-            criteria.setFeedType(StaticValues.INTERNET_LISTING_UPCOMING);
-            criteria.setIsoLanguage("en");
-            criteria.setIsoRegion("US");
-            // setup default critera
-            viewModel.setFeedListingCriteria(criteria);
-        }
+    private void setupInternetListing() {
+
     }
     ///////////////////////////////////////////////////////////////////////////
     // UI Setup functions
     ///////////////////////////////////////////////////////////////////////////
+    private void initInternetListingUI() {
+        initFeedSpinner();
+    }
+
+    private void initSearchListingUI() {
+
+    }
+
+    private void initSavedListingUI() {
+
+    }
     private void initDefaultToolbar() {
         setSupportActionBar(activityToolbar);
         // spinner needs to be setup
@@ -138,6 +163,12 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // Internal
+    ///////////////////////////////////////////////////////////////////////////
+    private boolean isFirstFragment() {
+        return (getFragmentManager().getBackStackEntryCount() == 0);
+    }
+    ///////////////////////////////////////////////////////////////////////////
     // UI Listeners
     ///////////////////////////////////////////////////////////////////////////
 
@@ -147,8 +178,8 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             movieFeedType = position;
             if(allowSelections) {
-                if(viewModel.getFeedListingCriteria() != null) {
-                    viewModel.getFeedListingCriteria().setFeedType(position);
+                if (fragment != null && fragment.getInternetListingCriteria() != null) {
+                    fragment.getInternetListingCriteria().setFeedType(position);
                 }
             } else {
                 allowSelections = true;
@@ -181,10 +212,5 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         Intent detailActivityIntent = new Intent(this, DetailActivity.class);
         detailActivityIntent.putExtra(StaticValues.BUNDLE_ATTR_MOVIE_ID, id);
         startActivity(detailActivityIntent);
-    }
-
-    @Override
-    public FeedListingCriteria getInternetListingCriteria() {
-        return viewModel.getFeedListingCriteria();
     }
 }

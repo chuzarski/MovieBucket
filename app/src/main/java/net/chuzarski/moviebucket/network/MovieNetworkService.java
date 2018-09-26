@@ -55,4 +55,10 @@ public interface MovieNetworkService {
     Call<ListingResponseModel> getNowPlayingListing(@Query("language") String isoLanguage,
                                                   @Query("region") String isoRegion, @Query("page") int page);
 
+    @GET("search/movie")
+    Call<ListingResponseModel> getSearchListing(@Query("query") String query,
+                                                @Query("language") String isoLanguage,
+                                                @Query("region") String isoRegion,
+                                                @Query("page") int page);
+
 }

@@ -2,10 +2,11 @@ package net.chuzarski.moviebucket.common;
 
 import java.util.Observable;
 
-public class FeedListingCriteria extends Observable {
+public class InternetListingCriteria extends Observable {
     private int feedType;
     private String isoLanguage;
     private String isoRegion;
+    private String searchQuery;
 
     public void setFeedType(int type) {
         feedType = type;
@@ -35,5 +36,13 @@ public class FeedListingCriteria extends Observable {
     private void onChanged() {
         setChanged();
         notifyObservers();
+    }
+
+    public String getSearchQuery() {
+        return searchQuery;
+    }
+
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
     }
 }

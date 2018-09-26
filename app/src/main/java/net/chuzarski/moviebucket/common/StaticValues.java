@@ -16,6 +16,7 @@ public class StaticValues {
     public static final int INTERNET_LISTING_NOW_PLAYING = 1;
     public static final int INTERNET_LISTING_TOP_RATED = 2;
     public static final int INTERNET_LISTING_POPULAR = 3;
+    public static final int INTERNET_LISTING_SEARCH = 100;
 
     // Listing Types
     public static final int LISTING_TYPE_INTERNET = 10;

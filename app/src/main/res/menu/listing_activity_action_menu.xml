@@ -7,4 +7,9 @@
         android:icon="@drawable/ic_refresh"
         android:title="@string/action_refresh"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/action_search"
+        app:showAsAction="ifRoom" />
 </menu>
