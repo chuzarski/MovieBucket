@@ -3,6 +3,7 @@ package net.chuzarski.moviebucket.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+import net.chuzarski.moviebucket.common.ServiceHolder;
 import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
 import net.chuzarski.moviebucket.common.LoadState;
@@ -20,7 +21,7 @@ public class DetailRepository {
 
     public DetailRepository() {
         Timber.tag("DetailRepository");
-        movieNetworkService = MovieNetworkServiceFactory.getInstance();
+        movieNetworkService = ServiceHolder.getInstance().getNetworkService();
         networkState = new MutableLiveData<>();
         networkState.postValue(LoadState.LOADING);
     }

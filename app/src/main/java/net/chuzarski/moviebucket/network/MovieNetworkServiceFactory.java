@@ -32,15 +32,19 @@ public class MovieNetworkServiceFactory {
      */
     public static MovieNetworkService getInstance() {
         if (instance == null) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(urlBase)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(getCustomHttpClient())
-                    .build();
-            instance = retrofit.create(MovieNetworkService.class);
+            instance = create();
         }
 
         return instance;
+    }
+
+    public static MovieNetworkService create() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(urlBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getCustomHttpClient())
+                .build();
+        return retrofit.create(MovieNetworkService.class);
     }
 
     /**

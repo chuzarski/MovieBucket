@@ -1,9 +1,6 @@
 package net.chuzarski.moviebucket.ui.listing;
 
-import android.app.SearchManager;
-import android.arch.persistence.room.PrimaryKey;
 import android.content.Intent;
-import android.provider.SearchRecentSuggestions;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.RecentMovieSuggestionProvider;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.ui.detail.DetailActivity;
 
@@ -29,16 +25,15 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
 
     // constants
     public static final String FRAGMENT_KEY_CURRENT = "FRAG_CURRENT";
-    public static final String FRAGMENT_KEY_INTERNET_LISTING = "FRAG_ILISTING";
-    public static final String FRAGMENT_KEY_SEARCH = "FRAG_SEARCH";
-    public static final String FRAGMENT_SAVED = "FRAG_SAVED";
-
     public static final String MOVIE_FEED_KEY = "MOVIE_FEED_TYPE";
 
     // UI references
     ListingFragment fragment;
-    @BindView(R.id.listing_activity_toolbar)
-    Toolbar activityToolbar;
+
+    @BindView(R.id.listing_activity_feed_toolbar)
+    Toolbar feedUIToolbar;
+
+    Toolbar localUIToolbar;
     @BindView(R.id.listing_feed_spinner)
     Spinner movieFeedSpinner;
 
@@ -50,36 +45,21 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     ///////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SearchRecentSuggestions searchSuggestions;
-        String searchQuery;
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_roll);
-        Timber.tag("ListingActivity");
-        Timber.d("Activity Created");
+        setContentView(R.layout.activity_listing);
 
         ButterKnife.bind(this);
 
+        // todo UI setUI methods are going to be handling fragment management in the future
         if(savedInstanceState == null) {
-            fragment = ListingFragment.newInstance();
-            if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
-                searchQuery = getIntent().getStringExtra(SearchManager.QUERY);
-                fragment.setSearchQuery(searchQuery);
-                searchSuggestions = new SearchRecentSuggestions(this,
-                        RecentMovieSuggestionProvider.AUTHORITY,
-                        RecentMovieSuggestionProvider.MODE);
-                searchSuggestions.saveRecentQuery(searchQuery, null);
-            }
+            initUI();
 
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+            // todo maybe the user wants to set what listing the app opens to?
+            setUIFeedListing();
         } else {
             fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY_CURRENT);
-            movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY, 0); //todo possibly set this to default user vaule?
+            movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY);
         }
-
-        setupInitialListing();
-
-        initDefaultToolbar();
     }
 
     @Override
@@ -123,37 +103,30 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     ///////////////////////////////////////////////////////////////////////////
     // Internal setup functions
     ///////////////////////////////////////////////////////////////////////////
-
     /**
      * This method decides what kind of listing this activity will be
      * i.e. is the activity being opened on fresh start, saved movies, search?
      */
-    private void setupInitialListing() {
-        initInternetListingUI();
-    }
-    private void setupInternetListing() {
-
-    }
     ///////////////////////////////////////////////////////////////////////////
     // UI Setup functions
     ///////////////////////////////////////////////////////////////////////////
-    private void initInternetListingUI() {
+    private void setUIFeedListing() {
+        setSupportActionBar(feedUIToolbar);
+        getSupportActionBar().setTitle("");
+
+    }
+
+    private void setUILocalListing() {
+        setSupportActionBar(localUIToolbar);
+        getSupportActionBar().setTitle(getResources()
+                .getString(R.string.listing_activity_local_listing_toolbar_label));
+
+        fragment = ListingFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+    }
+
+    private void initUI() {
         initFeedSpinner();
-    }
-
-    private void initSearchListingUI() {
-
-    }
-
-    private void initSavedListingUI() {
-
-    }
-    private void initDefaultToolbar() {
-        setSupportActionBar(activityToolbar);
-        // spinner needs to be setup
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("");
-        }
     }
 
     private void initFeedSpinner() {
@@ -163,11 +136,9 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Internal
+    // Fragment Management
     ///////////////////////////////////////////////////////////////////////////
-    private boolean isFirstFragment() {
-        return (getFragmentManager().getBackStackEntryCount() == 0);
-    }
+
     ///////////////////////////////////////////////////////////////////////////
     // UI Listeners
     ///////////////////////////////////////////////////////////////////////////
@@ -178,8 +149,9 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             movieFeedType = position;
             if(allowSelections) {
-                if (fragment != null && fragment.getInternetListingCriteria() != null) {
-                    fragment.getInternetListingCriteria().setFeedType(position);
+                if (fragment != null && fragment.getNetworkFeedConfiguration() != null) {
+                    fragment.getNetworkFeedConfiguration().setFeedType(position);
+                    fragment.refreshList();
                 }
             } else {
                 allowSelections = true;

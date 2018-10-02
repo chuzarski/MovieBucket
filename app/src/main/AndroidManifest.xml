@@ -3,7 +3,7 @@
     package="net.chuzarski.moviebucket">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".BucketApplication"
@@ -13,24 +13,40 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".ui.listing.ListingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SEARCH"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
-            <meta-data android:name="android.app.default_searchable" android:value=".ui.listing.ListingActivity"/>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".ui.listing.SearchListingActivity" />
         </activity>
 
-        <activity android:name=".ui.detail.DetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+        <activity
+            android:name=".ui.detail.DetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <provider
-            android:authorities="net.chuzarski.moviebucket.common.RecentMovieSuggestionProvider"
-            android:name="net.chuzarski.moviebucket.common.RecentMovieSuggestionProvider"/>
+            android:name=".common.RecentMovieSuggestionProvider"
+            android:authorities="net.chuzarski.moviebucket.common.RecentMovieSuggestionProvider" />
+
+        <activity android:name=".ui.listing.SearchListingActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".ui.listing.SearchListingActivity" />
+        </activity>
     </application>
 
 </manifest>

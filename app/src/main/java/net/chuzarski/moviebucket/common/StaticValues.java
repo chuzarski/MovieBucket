@@ -19,9 +19,7 @@ public class StaticValues {
     public static final int INTERNET_LISTING_SEARCH = 100;
 
     // Listing Types
-    public static final int LISTING_TYPE_INTERNET = 10;
-    public static final int LISTING_TYPE_SEARCH = 11;
-    public static final int LISTING_TYPE_WATCH_LIST = 12;
+    public static final int LISTING_TYPE_WATCH_LIST = 200;
 
     // Load states
     public static final int LOAD_STATE_LOADING = 100;

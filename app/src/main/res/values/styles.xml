@@ -27,4 +27,12 @@
         <item name="android:layout_marginBottom">@dimen/movie_detail_dimen_layout_margin</item>
     </style>
 
+    <style name="listing_toolbar_style_common">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?android:attr/actionBarSize</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
+    </style>
+
 </resources>

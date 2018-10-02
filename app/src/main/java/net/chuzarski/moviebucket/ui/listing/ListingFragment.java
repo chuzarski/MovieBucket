@@ -20,17 +20,19 @@ import com.bumptech.glide.RequestManager;
 
 import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.InternetListingCriteria;
+import net.chuzarski.moviebucket.common.ServiceHolder;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
-import net.chuzarski.moviebucket.repository.FeedListingRepository;
+import net.chuzarski.moviebucket.repository.NetworkListingRepository;
 
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
+
+import static net.chuzarski.moviebucket.repository.NetworkListingRepository.*;
 
 public class
 ListingFragment extends Fragment implements ListingItemInteractor {
@@ -42,15 +44,19 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     private ListingPagedListAdapter adapter;
     private RequestManager glideRequestManager;
 
-    // instance
-    private boolean searchableListing = false;
-    private String searchQuery;
-
     // UI elements
     @BindView(R.id.fragment_movie_roll_recylerview)
     public RecyclerView movieRecyclerView;
 
+    // Attribute Keys
     public static final String KEY_LIST_POSITION = "LIST_POSITION";
+    public static final String KEY_FRAGMENT_MODE = "MODE";
+    public static final String KEY_SEARCH_QUERY = "QUERY";
+    // Flags
+    public static final int MODE_FLAG_INTERNET_LISTING = 1;
+    public static final int MODE_FLAG_SEARCH_LISTING = 2;
+    public static final int MODE_FLAG_LOCAL_LISTING = 3;
+
 
     public ListingFragment() {
         // Required empty public constructor
@@ -58,6 +64,20 @@ ListingFragment extends Fragment implements ListingItemInteractor {
 
     public static ListingFragment newInstance() {
         return new ListingFragment();
+    }
+
+    /**
+     * Creates this fragment using arguments
+     * if null is passed for the bundle, the fragment will setup the same way if newInstance() is called
+     * @param args
+     * @return
+     */
+    public static ListingFragment newInstance(Bundle args) {
+        ListingFragment frag = new ListingFragment();
+        if (args != null) {
+            frag.setArguments(args);
+        }
+        return frag;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -78,14 +98,18 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        configureViewModel();
+        viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
+        if(viewModel.getRepository() == null) {
+            initViewModel();
+        }
+
         glideRequestManager = Glide.with(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movie_roll, container, false);
+        View view = inflater.inflate(R.layout.fragment_listing, container, false);
         unbinder = ButterKnife.bind(this, view);
         configureRecycler();
         if (savedInstanceState != null) {
@@ -100,6 +124,13 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         super.onStart();
         viewModel.getLoadState().observe(this, loadStateObserver);
         viewModel.getPagedListing().observe(this, list -> adapter.submitList(list));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        viewModel.getLoadState().removeObservers(this);
+        viewModel.getPagedListing().removeObservers(this);
     }
 
     @Override
@@ -121,13 +152,54 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         hostInteractor = null;
     }
     ///////////////////////////////////////////////////////////////////////////
-    // internal
+    // Internal
     ///////////////////////////////////////////////////////////////////////////
-
-    public void refreshList() {
-        viewModel.refresh();
+    private void initViewModel() {
+        if (getListingMode() == MODE_FLAG_LOCAL_LISTING) {
+            initLocalRepository();
+        } else {
+            initFeedRepository();
+        }
     }
 
+    private void initFeedRepository() {
+        NetworkFeedConfiguration config = new NetworkFeedConfiguration();
+
+        // todo defaults for fetch can be set here
+        config.setIsoLanguage("en");
+        config.setIsoRegion("US");
+
+        if (getListingMode() == MODE_FLAG_SEARCH_LISTING) {
+            config.setSearchQuery(getArguments().getString(KEY_SEARCH_QUERY, ""));
+            config.setFeedType(StaticValues.INTERNET_LISTING_SEARCH);
+        } else {
+            // todo set default listing here
+            config.setFeedType(StaticValues.INTERNET_LISTING_UPCOMING);
+        }
+
+        NetworkListingRepository repository =
+                new NetworkListingRepository(ServiceHolder.getInstance().getNetworkService(),
+                        ServiceHolder.getInstance().getCacheDb(),
+                ServiceHolder.getInstance().getIoExecutor(),
+                config);
+
+        viewModel.setRepository(repository);
+    }
+
+    private void initLocalRepository() {
+
+    }
+
+    public int getListingMode() {
+        if (getArguments() != null) {
+            return getArguments().getInt(KEY_FRAGMENT_MODE, MODE_FLAG_INTERNET_LISTING);
+        }
+        return MODE_FLAG_INTERNET_LISTING;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // UI Configuration
+    ///////////////////////////////////////////////////////////////////////////
     private void configureRecycler() {
         adapter = new ListingPagedListAdapter(this, glideRequestManager);
         movieRecyclerView.setAdapter(adapter);
@@ -149,44 +221,6 @@ ListingFragment extends Fragment implements ListingItemInteractor {
                 break;
         }
 
-    }
-
-    private void configureViewModel() {
-        viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-
-        if(viewModel.getRepository() == null) {
-            // view model is not ready, needs some settin!
-            initDefaultListingCriteria();
-            dispatchRepositoryConfiguration();
-        }
-    }
-
-    private void dispatchRepositoryConfiguration() {
-        // todo logic to determine what KIND of listing we are
-        injectFeedRepository();
-    }
-
-    private void injectFeedRepository() {
-        viewModel.setRepository(new FeedListingRepository(MovieNetworkServiceFactory.getInstance(),
-                Room.inMemoryDatabaseBuilder(getContext(),
-                        ListingCacheDb.class)
-                        .build(),
-                BucketApplication.getIoExectuor(),
-                viewModel.getInternetListingCriteria()));
-    }
-
-    private void initDefaultListingCriteria() {
-        //todo good place to set listing defaults based on user preferences
-        if(viewModel.getInternetListingCriteria() != null) {
-            if(searchableListing) {
-                viewModel.getInternetListingCriteria().setFeedType(StaticValues.INTERNET_LISTING_SEARCH);
-                viewModel.getInternetListingCriteria().setSearchQuery(searchQuery);
-            } else {
-                viewModel.getInternetListingCriteria().setFeedType(StaticValues.INTERNET_LISTING_UPCOMING);
-            }
-            viewModel.getInternetListingCriteria().setIsoLanguage("en");
-            viewModel.getInternetListingCriteria().setIsoRegion("US");
-        }
     }
     ///////////////////////////////////////////////////////////////////////////
     // Observers
@@ -217,14 +251,14 @@ ListingFragment extends Fragment implements ListingItemInteractor {
         hostInteractor.startMovieDetail(id);
     }
 
-    public InternetListingCriteria getInternetListingCriteria() {
-        return viewModel.getInternetListingCriteria();
+    public void refreshList() {
+        viewModel.refresh();
     }
 
-    public void setSearchQuery(String query) {
-        searchableListing = true;
-        searchQuery = query;
+    public NetworkFeedConfiguration getNetworkFeedConfiguration() {
+        return viewModel.getNetworkListingConfiguration();
     }
+
     public interface ListingFragmentInteractor {
         // TODO add interface for fragment interaction
         void disableReloadAction();

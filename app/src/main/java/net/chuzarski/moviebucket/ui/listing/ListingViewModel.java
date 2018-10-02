@@ -4,24 +4,19 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.paging.PagedList;
 
-import net.chuzarski.moviebucket.common.InternetListingCriteria;
 import net.chuzarski.moviebucket.models.ListingItemModel;
+import net.chuzarski.moviebucket.repository.NetworkListingRepository;
+import net.chuzarski.moviebucket.repository.NetworkListingRepository.NetworkFeedConfiguration;
 import net.chuzarski.moviebucket.repository.ListingRepository;
 
 import timber.log.Timber;
-
-/**
- * Created by cody on 3/21/18.
- */
 
 public class ListingViewModel extends ViewModel {
 
     private LiveData<PagedList<ListingItemModel>> pagedListing;
     private ListingRepository repo;
-    private InternetListingCriteria internetListingCriteria;
 
     public ListingViewModel() {
-        internetListingCriteria = new InternetListingCriteria();
     }
 
     public void refresh() {
@@ -40,9 +35,13 @@ public class ListingViewModel extends ViewModel {
         return repo.getLoadState();
     }
 
+    /**
+     * Sets this ViewModels repository
+     * Repository can only be set ONCE on a view model, if one is set, this call is ignored
+     * @param repository
+     */
     public void setRepository(ListingRepository repository) {
         if (repo != null) {
-            Timber.w("Do not attempt to set a repo on a ViewModel that already has one, request denied");
             return;
         }
         this.repo = repository;
@@ -52,7 +51,13 @@ public class ListingViewModel extends ViewModel {
         return repo;
     }
 
-    public InternetListingCriteria getInternetListingCriteria() {
-        return internetListingCriteria;
+    public NetworkFeedConfiguration getNetworkListingConfiguration() {
+        if (repo != null && repo instanceof NetworkListingRepository) {
+            return ((NetworkListingRepository) repo).getFeedConfiguration();
+        }
+
+        Timber.w("Attempt to retrieve ListingConfiguration failed because" +
+                "\n\t the viewmodel holds an incorrect instance of ListingRepository");
+        return null;
     }
 }

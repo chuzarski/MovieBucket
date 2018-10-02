@@ -7,7 +7,7 @@ import android.arch.paging.PagedList;
 import android.arch.paging.PagedList.Config;
 import android.support.annotation.NonNull;
 
-import net.chuzarski.moviebucket.common.InternetListingCriteria;
+import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
@@ -15,8 +15,6 @@ import net.chuzarski.moviebucket.network.MovieNetworkService;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.Executor;
 
 import retrofit2.Call;
@@ -28,14 +26,14 @@ import timber.log.Timber;
  * Created by cody on 3/27/18.
  */
 
-public class FeedListingRepository implements ListingRepository, Observer {
+public class NetworkListingRepository implements ListingRepository {
 
     private MutableLiveData<Integer> loadState;
     private MovieNetworkService networkService;
     private ListingCacheDb db;
     private Executor ioExectuor;
     private ListingBoundaryNetworkLoader networkLoader;
-    private InternetListingCriteria listingCriteria;
+    private NetworkFeedConfiguration feedConfiguration;
 
     private Config listConfig = new Config.Builder()
             .setPageSize(StaticValues.listingPageSize)
@@ -43,8 +41,8 @@ public class FeedListingRepository implements ListingRepository, Observer {
             .build();
 
 
-    public FeedListingRepository(MovieNetworkService networkService, ListingCacheDb db,
-                                 Executor ioExecutor, InternetListingCriteria criteria) {
+    public NetworkListingRepository(MovieNetworkService networkService, ListingCacheDb db,
+                                    Executor ioExecutor, NetworkFeedConfiguration config) {
 
         loadState = new MutableLiveData<>();
         loadState.postValue(StaticValues.LOAD_STATE_LOADING);
@@ -52,10 +50,9 @@ public class FeedListingRepository implements ListingRepository, Observer {
         this.networkService = networkService;
         this.db = db;
         this.ioExectuor = ioExecutor;
-        this.listingCriteria = criteria;
+        this.feedConfiguration = config;
 
-        networkLoader = new ListingBoundaryNetworkLoader(criteria.getIsoLanguage(), criteria.getIsoRegion());
-        listingCriteria.addObserver(this);
+        networkLoader = new ListingBoundaryNetworkLoader(config.getIsoLanguage(), config.getIsoRegion());
     }
 
     public LiveData<Integer> getLoadState() {
@@ -69,6 +66,13 @@ public class FeedListingRepository implements ListingRepository, Observer {
                 .build();
     }
 
+    public NetworkFeedConfiguration getFeedConfiguration() {
+        return feedConfiguration;
+    }
+
+    public void setFeedConfiguration(NetworkFeedConfiguration feedConfiguration) {
+        this.feedConfiguration = feedConfiguration;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Database Operations
@@ -83,12 +87,6 @@ public class FeedListingRepository implements ListingRepository, Observer {
         ioExectuor.execute(() -> {
             db.listingDao().insertAll(models);
         });
-    }
-
-    //todo refactor this
-    @Override
-    public void update(Observable observable, Object o) {
-        refresh();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -150,33 +148,33 @@ public class FeedListingRepository implements ListingRepository, Observer {
         }
 
         private void dispatchLoadingMethod() {
-            switch (listingCriteria.getFeedType()) {
+            switch (feedConfiguration.getFeedType()) {
                 case StaticValues.INTERNET_LISTING_UPCOMING:
-                    networkService.getUpcomingListing(listingCriteria.getIsoLanguage(),
-                            listingCriteria.getIsoRegion(), page)
+                    networkService.getUpcomingListing(feedConfiguration.getIsoLanguage(),
+                            feedConfiguration.getIsoRegion(), page)
                             .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_POPULAR:
-                    networkService.getPopularListing(listingCriteria.getIsoLanguage(),
-                            listingCriteria.getIsoRegion(), page)
+                    networkService.getPopularListing(feedConfiguration.getIsoLanguage(),
+                            feedConfiguration.getIsoRegion(), page)
                             .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_NOW_PLAYING:
-                    networkService.getNowPlayingListing(listingCriteria.getIsoLanguage(),
-                            listingCriteria.getIsoRegion(), page)
+                    networkService.getNowPlayingListing(feedConfiguration.getIsoLanguage(),
+                            feedConfiguration.getIsoRegion(), page)
                             .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_TOP_RATED:
-                    networkService.getTopRatedListing(listingCriteria.getIsoLanguage(),
-                            listingCriteria.getIsoRegion(), page)
+                    networkService.getTopRatedListing(feedConfiguration.getIsoLanguage(),
+                            feedConfiguration.getIsoRegion(), page)
                             .enqueue(responseCallback);
                     break;
                 case StaticValues.INTERNET_LISTING_SEARCH:
-                    networkService.getSearchListing(listingCriteria.getSearchQuery(),
-                            listingCriteria.getIsoLanguage(),
-                            listingCriteria.getIsoRegion(),
+                    networkService.getSearchListing(feedConfiguration.getSearchQuery(),
+                            feedConfiguration.getIsoLanguage(),
+                            feedConfiguration.getIsoRegion(),
                             page)
-                    .enqueue(responseCallback);
+                            .enqueue(responseCallback);
                     break;
             }
         }
@@ -187,6 +185,45 @@ public class FeedListingRepository implements ListingRepository, Observer {
 
         public int getTotalPages() {
             return totalPages;
+        }
+    }
+
+    public static class NetworkFeedConfiguration {
+        private int feedType;
+        private String isoLanguage;
+        private String isoRegion;
+        private String searchQuery;
+
+        public void setFeedType(int type) {
+            feedType = type;
+        }
+
+        public int getFeedType() {
+            return feedType;
+        }
+
+        public String getIsoLanguage() {
+            return isoLanguage;
+        }
+
+        public void setIsoLanguage(String isoLanguage) {
+            this.isoLanguage = isoLanguage;
+        }
+
+        public String getIsoRegion() {
+            return isoRegion;
+        }
+
+        public void setIsoRegion(String isoRegion) {
+            this.isoRegion = isoRegion;
+        }
+
+        public String getSearchQuery() {
+            return searchQuery;
+        }
+
+        public void setSearchQuery(String searchQuery) {
+            this.searchQuery = searchQuery;
         }
     }
 }

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import net.chuzarski.moviebucket.common.ServiceHolder;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -28,6 +30,8 @@ public class BucketApplication extends Application {
         Timber.d("We have logging");
 
         ioExectuor = Executors.newFixedThreadPool(3);
+
+        ServiceHolder.newInstance(getApplicationContext());
 
         AndroidThreeTen.init(this);
     }

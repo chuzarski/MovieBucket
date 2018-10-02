@@ -17,7 +17,7 @@
     <string name="listing_cardview_image_poster_description">Movie Poster</string>
 
     <!--- MENUS -->
-    <!-- Listing-->
+    <!-- Listing Common-->
     <string name="listing_nav_drawer_item_upcoming_string">Upcoming</string>
     <string name="action_listing_opts">Listing</string>
     <string name="action_set_listing_upcoming">Upcoming</string>
@@ -28,7 +28,10 @@
     <string name="action_search">Search</string>
     <string name="listing_item_action_open">Open</string>
     <string name="listing_item_action_share">Share</string>
-    
+
+    <!-- Listing Activity -->
+    <string name="listing_activity_local_listing_toolbar_label">Saved Movies</string>
+
     <string-array name="movie_feeds">
         <item>Upcoming</item>
         <item>Now Playing</item>
