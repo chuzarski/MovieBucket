@@ -149,10 +149,7 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             movieFeedType = position;
             if(allowSelections) {
-                if (fragment != null && fragment.getNetworkFeedConfiguration() != null) {
-                    fragment.getNetworkFeedConfiguration().setFeedType(position);
-                    fragment.refreshList();
-                }
+                Timber.d("Selection selected!");
             } else {
                 allowSelections = true;
             }

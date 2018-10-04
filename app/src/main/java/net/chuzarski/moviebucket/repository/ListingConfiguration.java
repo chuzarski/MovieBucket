@@ -1,8 +1,6 @@
-package net.chuzarski.moviebucket.common;
+package net.chuzarski.moviebucket.repository;
 
-import java.util.Observable;
-
-public class InternetListingCriteria extends Observable {
+public class ListingConfiguration {
     private int feedType;
     private String isoLanguage;
     private String isoRegion;
@@ -10,7 +8,6 @@ public class InternetListingCriteria extends Observable {
 
     public void setFeedType(int type) {
         feedType = type;
-        onChanged();
     }
 
     public int getFeedType() {
@@ -31,11 +28,6 @@ public class InternetListingCriteria extends Observable {
 
     public void setIsoRegion(String isoRegion) {
         this.isoRegion = isoRegion;
-    }
-
-    private void onChanged() {
-        setChanged();
-        notifyObservers();
     }
 
     public String getSearchQuery() {

@@ -12,7 +12,7 @@ public class LocalListingRepository implements ListingRepository {
     }
 
     @Override
-    public LiveData<PagedList<ListingItemModel>> getListing() {
+    public LiveData<PagedList<ListingItemModel>> getListing(ListingConfiguration configuration) {
         return null;
     }
 

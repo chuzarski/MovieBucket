@@ -22,4 +22,5 @@ public interface ListingCacheDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<ListingItemModel> models);
+
 }

@@ -5,9 +5,10 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.paging.PagedList;
 
 import net.chuzarski.moviebucket.models.ListingItemModel;
-import net.chuzarski.moviebucket.repository.NetworkListingRepository;
-import net.chuzarski.moviebucket.repository.NetworkListingRepository.NetworkFeedConfiguration;
 import net.chuzarski.moviebucket.repository.ListingRepository;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import timber.log.Timber;
 
@@ -15,8 +16,11 @@ public class ListingViewModel extends ViewModel {
 
     private LiveData<PagedList<ListingItemModel>> pagedListing;
     private ListingRepository repo;
+    private Map<String, String> listConfigMap;
 
-    public ListingViewModel() {
+    public ListingViewModel(ListingRepository repository) {
+        repo = repository;
+        listConfigMap = new HashMap<>();
     }
 
     public void refresh() {
@@ -26,7 +30,7 @@ public class ListingViewModel extends ViewModel {
 
     public LiveData<PagedList<ListingItemModel>> getPagedListing() {
         if(pagedListing == null) {
-          pagedListing = repo.getListing();
+          pagedListing = repo.getListing(listConfigMap);
         }
         return pagedListing;
     }
@@ -35,29 +39,8 @@ public class ListingViewModel extends ViewModel {
         return repo.getLoadState();
     }
 
-    /**
-     * Sets this ViewModels repository
-     * Repository can only be set ONCE on a view model, if one is set, this call is ignored
-     * @param repository
-     */
-    public void setRepository(ListingRepository repository) {
-        if (repo != null) {
-            return;
-        }
-        this.repo = repository;
-    }
 
-    public ListingRepository getRepository() {
-        return repo;
-    }
-
-    public NetworkFeedConfiguration getNetworkListingConfiguration() {
-        if (repo != null && repo instanceof NetworkListingRepository) {
-            return ((NetworkListingRepository) repo).getFeedConfiguration();
-        }
-
-        Timber.w("Attempt to retrieve ListingConfiguration failed because" +
-                "\n\t the viewmodel holds an incorrect instance of ListingRepository");
-        return null;
+    public Map<String, String> getListConfigMap() {
+        return listConfigMap;
     }
 }

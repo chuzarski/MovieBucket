@@ -98,8 +98,6 @@ public class DetailFragment extends Fragment {
             displayTrailers(model);
 
         });
-
-
     }
 
     @Override

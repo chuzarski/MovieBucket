@@ -4,7 +4,9 @@ import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import net.chuzarski.moviebucket.common.ServiceHolder;
+import net.chuzarski.moviebucket.di.ApplicationServices;
+import net.chuzarski.moviebucket.di.ContextModule;
+import net.chuzarski.moviebucket.di.DaggerApplicationServices;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -17,7 +19,7 @@ import timber.log.Timber;
 
 public class BucketApplication extends Application {
 
-    private static Executor ioExectuor;
+    private ApplicationServices applicationServices;
 
     @Override
     public void onCreate() {
@@ -29,14 +31,15 @@ public class BucketApplication extends Application {
         Timber.tag("Application");
         Timber.d("We have logging");
 
-        ioExectuor = Executors.newFixedThreadPool(3);
-
-        ServiceHolder.newInstance(getApplicationContext());
+        applicationServices = DaggerApplicationServices
+                .builder()
+                .contextModule(new ContextModule(getApplicationContext()))
+                .build();
 
         AndroidThreeTen.init(this);
     }
 
-    public static Executor getIoExectuor() {
-        return ioExectuor;
+    public ApplicationServices getApplicationServices() {
+        return applicationServices;
     }
 }

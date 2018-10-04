@@ -15,7 +15,7 @@ import retrofit2.http.Query;
  * Created by cody on 3/21/18.
  */
 
-public interface MovieNetworkService {
+public interface NetworkService {
 
 
     /**

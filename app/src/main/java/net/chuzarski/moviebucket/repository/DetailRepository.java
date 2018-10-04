@@ -3,11 +3,11 @@ package net.chuzarski.moviebucket.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import net.chuzarski.moviebucket.common.ServiceHolder;
-import net.chuzarski.moviebucket.network.MovieNetworkService;
-import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
+import net.chuzarski.moviebucket.network.NetworkService;
 import net.chuzarski.moviebucket.common.LoadState;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,12 +16,13 @@ import timber.log.Timber;
 
 public class DetailRepository {
 
-    private MovieNetworkService movieNetworkService;
+    private NetworkService networkService;
     private MutableLiveData<LoadState> networkState;
 
-    public DetailRepository() {
+    @Inject
+    public DetailRepository(NetworkService networkService) {
         Timber.tag("DetailRepository");
-        movieNetworkService = ServiceHolder.getInstance().getNetworkService();
+        this.networkService = networkService;
         networkState = new MutableLiveData<>();
         networkState.postValue(LoadState.LOADING);
     }
@@ -41,7 +42,7 @@ public class DetailRepository {
         final MutableLiveData<DetailedMovieModel> model = new MutableLiveData<>();
 
         networkState.postValue(LoadState.LOADING);
-        movieNetworkService.getMovieDetail(id).enqueue(new Callback<DetailedMovieModel>() {
+        networkService.getMovieDetail(id).enqueue(new Callback<DetailedMovieModel>() {
             @Override
             public void onResponse(Call<DetailedMovieModel> call, Response<DetailedMovieModel> response) {
                 model.postValue(response.body());

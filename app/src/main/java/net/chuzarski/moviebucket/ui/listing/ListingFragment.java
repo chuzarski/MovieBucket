@@ -2,7 +2,6 @@ package net.chuzarski.moviebucket.ui.listing;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -18,12 +17,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
-import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
-import net.chuzarski.moviebucket.common.ServiceHolder;
 import net.chuzarski.moviebucket.common.StaticValues;
-import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
-import net.chuzarski.moviebucket.network.MovieNetworkServiceFactory;
 import net.chuzarski.moviebucket.repository.NetworkListingRepository;
 
 
@@ -31,8 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import timber.log.Timber;
-
-import static net.chuzarski.moviebucket.repository.NetworkListingRepository.*;
 
 public class
 ListingFragment extends Fragment implements ListingItemInteractor {
@@ -98,10 +91,8 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // todo ViewModelFactory will be used here
         viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-        if(viewModel.getRepository() == null) {
-            initViewModel();
-        }
 
         glideRequestManager = Glide.with(this);
     }
@@ -154,42 +145,6 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     ///////////////////////////////////////////////////////////////////////////
     // Internal
     ///////////////////////////////////////////////////////////////////////////
-    private void initViewModel() {
-        if (getListingMode() == MODE_FLAG_LOCAL_LISTING) {
-            initLocalRepository();
-        } else {
-            initFeedRepository();
-        }
-    }
-
-    private void initFeedRepository() {
-        NetworkFeedConfiguration config = new NetworkFeedConfiguration();
-
-        // todo defaults for fetch can be set here
-        config.setIsoLanguage("en");
-        config.setIsoRegion("US");
-
-        if (getListingMode() == MODE_FLAG_SEARCH_LISTING) {
-            config.setSearchQuery(getArguments().getString(KEY_SEARCH_QUERY, ""));
-            config.setFeedType(StaticValues.INTERNET_LISTING_SEARCH);
-        } else {
-            // todo set default listing here
-            config.setFeedType(StaticValues.INTERNET_LISTING_UPCOMING);
-        }
-
-        NetworkListingRepository repository =
-                new NetworkListingRepository(ServiceHolder.getInstance().getNetworkService(),
-                        ServiceHolder.getInstance().getCacheDb(),
-                ServiceHolder.getInstance().getIoExecutor(),
-                config);
-
-        viewModel.setRepository(repository);
-    }
-
-    private void initLocalRepository() {
-
-    }
-
     public int getListingMode() {
         if (getArguments() != null) {
             return getArguments().getInt(KEY_FRAGMENT_MODE, MODE_FLAG_INTERNET_LISTING);
@@ -253,10 +208,6 @@ ListingFragment extends Fragment implements ListingItemInteractor {
 
     public void refreshList() {
         viewModel.refresh();
-    }
-
-    public NetworkFeedConfiguration getNetworkFeedConfiguration() {
-        return viewModel.getNetworkListingConfiguration();
     }
 
     public interface ListingFragmentInteractor {

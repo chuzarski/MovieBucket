@@ -7,42 +7,41 @@ import android.arch.paging.PagedList;
 import android.arch.paging.PagedList.Config;
 import android.support.annotation.NonNull;
 
-import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
-import net.chuzarski.moviebucket.network.MovieNetworkService;
+import net.chuzarski.moviebucket.network.NetworkService;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-/**
- * Created by cody on 3/27/18.
- */
 
 public class NetworkListingRepository implements ListingRepository {
 
     private MutableLiveData<Integer> loadState;
-    private MovieNetworkService networkService;
+    private NetworkService networkService;
     private ListingCacheDb db;
     private Executor ioExectuor;
-    private ListingBoundaryNetworkLoader networkLoader;
-    private NetworkFeedConfiguration feedConfiguration;
 
     private Config listConfig = new Config.Builder()
             .setPageSize(StaticValues.listingPageSize)
             .setPrefetchDistance(StaticValues.listingPrefetchDistance)
             .build();
 
-
-    public NetworkListingRepository(MovieNetworkService networkService, ListingCacheDb db,
-                                    Executor ioExecutor, NetworkFeedConfiguration config) {
+    @Inject
+    public NetworkListingRepository(NetworkService networkService,
+                                    ListingCacheDb db,
+                                    @Named("ioExecutor") Executor ioExecutor) {
 
         loadState = new MutableLiveData<>();
         loadState.postValue(StaticValues.LOAD_STATE_LOADING);
@@ -50,28 +49,17 @@ public class NetworkListingRepository implements ListingRepository {
         this.networkService = networkService;
         this.db = db;
         this.ioExectuor = ioExecutor;
-        this.feedConfiguration = config;
-
-        networkLoader = new ListingBoundaryNetworkLoader(config.getIsoLanguage(), config.getIsoRegion());
     }
 
     public LiveData<Integer> getLoadState() {
         return loadState;
     }
 
-    public LiveData<PagedList<ListingItemModel>> getListing() {
+    public LiveData<PagedList<ListingItemModel>> getListing(Map<String, String> listingConfiguration) {
         return new LivePagedListBuilder<Integer, ListingItemModel>(db.listingDao().getAllDataSource(), listConfig)
                 .setFetchExecutor(ioExectuor)
-                .setBoundaryCallback(networkLoader)
+                .setBoundaryCallback(new ListingBoundaryNetworkLoader(listingConfiguration)) // todo update this for Map
                 .build();
-    }
-
-    public NetworkFeedConfiguration getFeedConfiguration() {
-        return feedConfiguration;
-    }
-
-    public void setFeedConfiguration(NetworkFeedConfiguration feedConfiguration) {
-        this.feedConfiguration = feedConfiguration;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -95,8 +83,8 @@ public class NetworkListingRepository implements ListingRepository {
     private class ListingBoundaryNetworkLoader extends PagedList.BoundaryCallback<ListingItemModel> {
         private int page = 0;
         private int totalPages = 0;
-        private String language;
-        private String region;
+        private ListingConfiguration feedConfiguration;
+
 
         private Callback<ListingResponseModel> responseCallback =
                 new Callback<ListingResponseModel>() {
@@ -115,14 +103,10 @@ public class NetworkListingRepository implements ListingRepository {
             }
         };
 
-        /**
-         * @param isoLanguage language specifier in ISO 639-1 format
-         * @param isoRegion region specifier in ISO 3166-1 format
-         */
-        public ListingBoundaryNetworkLoader(String isoLanguage, String isoRegion) {
-            language = isoLanguage;
-            region = isoRegion;
+        ListingBoundaryNetworkLoader(ListingConfiguration loadConfiguration) {
+            this.feedConfiguration = loadConfiguration;
         }
+
 
         @Override
         public void onZeroItemsLoaded() {
@@ -185,45 +169,6 @@ public class NetworkListingRepository implements ListingRepository {
 
         public int getTotalPages() {
             return totalPages;
-        }
-    }
-
-    public static class NetworkFeedConfiguration {
-        private int feedType;
-        private String isoLanguage;
-        private String isoRegion;
-        private String searchQuery;
-
-        public void setFeedType(int type) {
-            feedType = type;
-        }
-
-        public int getFeedType() {
-            return feedType;
-        }
-
-        public String getIsoLanguage() {
-            return isoLanguage;
-        }
-
-        public void setIsoLanguage(String isoLanguage) {
-            this.isoLanguage = isoLanguage;
-        }
-
-        public String getIsoRegion() {
-            return isoRegion;
-        }
-
-        public void setIsoRegion(String isoRegion) {
-            this.isoRegion = isoRegion;
-        }
-
-        public String getSearchQuery() {
-            return searchQuery;
-        }
-
-        public void setSearchQuery(String searchQuery) {
-            this.searchQuery = searchQuery;
         }
     }
 }

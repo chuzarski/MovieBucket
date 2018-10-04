@@ -2,6 +2,10 @@ package net.chuzarski.moviebucket.common;
 
 public class StaticValues {
 
+
+    // Required URLS
+    public static final String networkApiUrlBase = "https://api.themoviedb.org/3/";
+
     // Listing Fragment and friends
     public static int listingPageSize = 1;
     public static int listingPrefetchDistance = 8;
