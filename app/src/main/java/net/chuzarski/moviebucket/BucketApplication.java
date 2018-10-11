@@ -4,22 +4,15 @@ import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import net.chuzarski.moviebucket.di.ApplicationServices;
-import net.chuzarski.moviebucket.di.ContextModule;
-import net.chuzarski.moviebucket.di.DaggerApplicationServices;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import net.chuzarski.moviebucket.di.AppComponent;
+import net.chuzarski.moviebucket.di.DaggerAppComponent;
 
 import timber.log.Timber;
 
-/**
- * Created by cody on 3/21/18.
- */
 
 public class BucketApplication extends Application {
 
-    private ApplicationServices applicationServices;
+    private AppComponent appComponent;
 
     @Override
     public void onCreate() {
@@ -31,15 +24,15 @@ public class BucketApplication extends Application {
         Timber.tag("Application");
         Timber.d("We have logging");
 
-        applicationServices = DaggerApplicationServices
+        appComponent = DaggerAppComponent
                 .builder()
-                .contextModule(new ContextModule(getApplicationContext()))
+                .application(this)
                 .build();
 
         AndroidThreeTen.init(this);
     }
 
-    public ApplicationServices getApplicationServices() {
-        return applicationServices;
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 }

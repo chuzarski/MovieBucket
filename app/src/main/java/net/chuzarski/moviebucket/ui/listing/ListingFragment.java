@@ -1,11 +1,13 @@
 package net.chuzarski.moviebucket.ui.listing;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,10 +19,14 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
+import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
+import net.chuzarski.moviebucket.common.AppViewModelFactory;
 import net.chuzarski.moviebucket.common.StaticValues;
-import net.chuzarski.moviebucket.repository.NetworkListingRepository;
+import net.chuzarski.moviebucket.di.InjectableFragment;
 
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,12 +34,15 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 
 public class
-ListingFragment extends Fragment implements ListingItemInteractor {
+ListingFragment extends Fragment implements ListingItemInteractor, InjectableFragment {
 
     private ListingFragmentInteractor hostInteractor;
     private Unbinder unbinder;
 
     private ListingViewModel viewModel;
+    @Inject
+    public AppViewModelFactory vmFactory;
+
     private ListingPagedListAdapter adapter;
     private RequestManager glideRequestManager;
 
@@ -90,10 +99,7 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // todo ViewModelFactory will be used here
-        viewModel = ViewModelProviders.of(this).get(ListingViewModel.class);
-
+        viewModel = ViewModelProviders.of(this, vmFactory).get(ListingViewModel.class);
         glideRequestManager = Glide.with(this);
     }
 
@@ -111,6 +117,12 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         viewModel.getLoadState().observe(this, loadStateObserver);
@@ -118,10 +130,8 @@ ListingFragment extends Fragment implements ListingItemInteractor {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        viewModel.getLoadState().removeObservers(this);
-        viewModel.getPagedListing().removeObservers(this);
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

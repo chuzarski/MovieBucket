@@ -30,4 +30,7 @@ public class StaticValues {
     public static final int LOAD_STATE_LOADED = 200;
     public static final int LOAD_STATE_FAILED = 500;
     public static final int LOAD_STATE_NOT_FOUND = 404;
+
+    // Keys
+    public static final String KEY_LISTING_REPO_LOAD_SOURCE = "REPO_SOURCE";
 }

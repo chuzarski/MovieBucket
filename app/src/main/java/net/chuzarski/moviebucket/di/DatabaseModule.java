@@ -1,5 +1,6 @@
 package net.chuzarski.moviebucket.di;
 
+import android.app.Application;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
@@ -14,21 +15,15 @@ import dagger.Provides;
 @Module
 public class DatabaseModule {
 
-    private ListingCacheDb memoryCacheDb;
-
-    public DatabaseModule(Context context) {
-        memoryCacheDb = Room.inMemoryDatabaseBuilder(context, ListingCacheDb.class).build();
+    @Singleton
+    @Provides
+    public ListingCacheDb provideMemoryCacheDb(Application application) {
+        return Room.inMemoryDatabaseBuilder(application, ListingCacheDb.class).build();
     }
 
     @Singleton
     @Provides
-    public ListingCacheDb provideMemoryCacheDb() {
-        return memoryCacheDb;
-    }
-
-    @Singleton
-    @Provides
-    public ListingCacheDao provideListingCacheDao() {
-        return memoryCacheDb.listingDao();
+    public ListingCacheDao provideListingCacheDao(ListingCacheDb db) {
+        return db.listingDao();
     }
 }

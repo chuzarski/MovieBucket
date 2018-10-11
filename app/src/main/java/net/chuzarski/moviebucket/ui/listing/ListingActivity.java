@@ -1,7 +1,10 @@
 package net.chuzarski.moviebucket.ui.listing;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +16,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.ui.detail.DetailActivity;
@@ -48,13 +52,13 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listing);
 
-        ButterKnife.bind(this);
+        initFragmentAutoInjection();
 
+        ButterKnife.bind(this);
         // todo UI setUI methods are going to be handling fragment management in the future
         if(savedInstanceState == null) {
             initUI();
-
-            // todo maybe the user wants to set what listing the app opens to?
+            // todo temp
             setUIFeedListing();
         } else {
             fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY_CURRENT);
@@ -113,15 +117,20 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     private void setUIFeedListing() {
         setSupportActionBar(feedUIToolbar);
         getSupportActionBar().setTitle("");
-
+        fragment = ListingFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
     }
 
     private void setUILocalListing() {
+        BucketApplication app;
+        app = (BucketApplication) getApplication();
+
         setSupportActionBar(localUIToolbar);
         getSupportActionBar().setTitle(getResources()
                 .getString(R.string.listing_activity_local_listing_toolbar_label));
 
         fragment = ListingFragment.newInstance();
+        app.getAppComponent().inject(fragment);
         getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
     }
 
@@ -138,7 +147,20 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     ///////////////////////////////////////////////////////////////////////////
     // Fragment Management
     ///////////////////////////////////////////////////////////////////////////
+    private void initFragmentAutoInjection() {
+        BucketApplication app;
+        app = (BucketApplication) getApplication();
 
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentAttached(FragmentManager fm, Fragment f, Context context) {
+                super.onFragmentAttached(fm, f, context);
+                if(f instanceof ListingFragment) {
+                    app.getAppComponent().inject((ListingFragment) f);
+                }
+            }
+        }, false);
+    }
     ///////////////////////////////////////////////////////////////////////////
     // UI Listeners
     ///////////////////////////////////////////////////////////////////////////

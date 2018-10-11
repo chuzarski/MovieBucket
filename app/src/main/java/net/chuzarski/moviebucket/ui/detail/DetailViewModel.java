@@ -20,7 +20,7 @@ public class DetailViewModel extends ViewModel {
 
     public DetailViewModel() {
         Timber.tag("MovieDetail Viewmodel");
-        repo = new DetailRepository();
+        repo = new DetailRepository(null); // todo fix this before next build
         networkState = repo.getNetworkState();
     }
 
