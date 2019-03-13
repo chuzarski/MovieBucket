@@ -8,7 +8,7 @@ import android.arch.paging.PagedList.Config;
 import android.support.annotation.NonNull;
 
 import net.chuzarski.moviebucket.common.StaticValues;
-import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
+import net.chuzarski.moviebucket.db.ApplicationDatabase;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
 import net.chuzarski.moviebucket.network.NetworkService;
 import net.chuzarski.moviebucket.models.ListingItemModel;
@@ -30,7 +30,7 @@ public class ListingRepository {
 
     private MutableLiveData<Integer> loadState;
     private NetworkService networkService;
-    private ListingCacheDb db;
+    private ApplicationDatabase db;
     private Executor ioExectuor;
 
     private Config listConfig = new Config.Builder()
@@ -40,7 +40,7 @@ public class ListingRepository {
 
     @Inject
     public ListingRepository(NetworkService networkService,
-                             ListingCacheDb db,
+                             ApplicationDatabase db,
                              @Named("ioExecutor") Executor ioExecutor) {
 
         loadState = new MutableLiveData<>();

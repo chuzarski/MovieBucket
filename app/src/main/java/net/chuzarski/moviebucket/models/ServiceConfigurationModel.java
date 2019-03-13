@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by cody on 3/21/18.
- */
 
 public class ServiceConfigurationModel {
 

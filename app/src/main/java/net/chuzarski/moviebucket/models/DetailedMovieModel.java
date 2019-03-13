@@ -11,11 +11,6 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.List;
 
-
-/**
- * Created by cody on 3/21/18.
- */
-
 @Entity
 public class DetailedMovieModel {
 

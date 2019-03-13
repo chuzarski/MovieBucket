@@ -4,15 +4,15 @@ import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import net.chuzarski.moviebucket.di.AppComponent;
-import net.chuzarski.moviebucket.di.DaggerAppComponent;
+import net.chuzarski.moviebucket.di.AppComponentInjector;
+import net.chuzarski.moviebucket.di.DaggerAppComponentInjector;
 
 import timber.log.Timber;
 
 
 public class BucketApplication extends Application {
 
-    private AppComponent appComponent;
+    private AppComponentInjector appComponentInjector;
 
     @Override
     public void onCreate() {
@@ -24,7 +24,7 @@ public class BucketApplication extends Application {
         Timber.tag("Application");
         Timber.d("We have logging");
 
-        appComponent = DaggerAppComponent
+        appComponentInjector = DaggerAppComponentInjector
                 .builder()
                 .application(this)
                 .build();
@@ -32,7 +32,7 @@ public class BucketApplication extends Application {
         AndroidThreeTen.init(this);
     }
 
-    public AppComponent getAppComponent() {
-        return appComponent;
+    public AppComponentInjector getAppComponentInjector() {
+        return appComponentInjector;
     }
 }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/toolbar_listingactivity_feed"/>
+        <include layout="@layout/toolbar_listing_activity"/>
         <FrameLayout
             android:orientation="vertical"
             xmlns:tools="http://schemas.android.com/tools"
@@ -23,17 +23,18 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/activity_movie_roll_fragment_frame"/>
+                android:id="@+id/listing_activity_network_listing_frame"/>
         </FrameLayout>
     </LinearLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/listing_nav_view"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/drawer_listing_preferences"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/listing_drawer"
-        app:headerLayout="@layout/nav_drawer_header"/>
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:fitsSystemWindows="true" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -3,18 +3,15 @@ package net.chuzarski.moviebucket.network;
 import net.chuzarski.moviebucket.models.CollectionModel;
 import net.chuzarski.moviebucket.models.DiscoverModel;
 import net.chuzarski.moviebucket.models.DetailedMovieModel;
+import net.chuzarski.moviebucket.models.GenreResponseModel;
 import net.chuzarski.moviebucket.models.ListingResponseModel;
+import net.chuzarski.moviebucket.models.RatingResponseModel;
 import net.chuzarski.moviebucket.models.ServiceConfigurationModel;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-/**
- * Created by cody on 3/21/18.
- */
-
 public interface NetworkService {
 
 
@@ -35,6 +32,12 @@ public interface NetworkService {
 
     @GET("configuration")
     Call<ServiceConfigurationModel> getServiceConfiguration();
+
+    @GET("genre/movie/list")
+    Call<GenreResponseModel> getGenreList(@Query("isoLang") String isoLanguage);
+
+    @GET("certification/movie/list")
+    Call<RatingResponseModel> getRatingsList();
 
     @GET("collection/{id}")
     Call<CollectionModel> getCollection(@Path("id") int collectionId);

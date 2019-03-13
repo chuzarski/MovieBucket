@@ -16,6 +16,7 @@
         <activity android:name=".ui.listing.ListingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -26,10 +27,9 @@
                 android:name="android.app.default_searchable"
                 android:value=".ui.listing.SearchListingActivity" />
         </activity>
-
         <activity
             android:name=".ui.detail.DetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <provider
             android:name=".common.RecentMovieSuggestionProvider"

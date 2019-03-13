@@ -19,9 +19,6 @@ import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 import net.chuzarski.moviebucket.models.ListingItemModel;
 import net.chuzarski.moviebucket.ui.listing.ListingViewHolder;
 
-/**
- * Created by cody on 3/23/18.
- */
 
 public class ListingPagedListAdapter extends PagedListAdapter<ListingItemModel, ListingViewHolder> {
 

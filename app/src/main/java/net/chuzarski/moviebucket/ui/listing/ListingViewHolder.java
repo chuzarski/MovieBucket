@@ -15,9 +15,6 @@ import net.chuzarski.moviebucket.common.MovieImagePathHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by cody on 3/21/18.
- */
 
 public class ListingViewHolder extends RecyclerView.ViewHolder {
 

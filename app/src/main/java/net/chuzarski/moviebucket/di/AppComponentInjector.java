@@ -2,14 +2,9 @@ package net.chuzarski.moviebucket.di;
 
 import android.app.Application;
 import android.arch.lifecycle.ViewModelProvider;
-import android.content.Context;
 
-import net.chuzarski.moviebucket.db.listing.ListingCacheDao;
-import net.chuzarski.moviebucket.db.listing.ListingCacheDb;
-import net.chuzarski.moviebucket.network.NetworkService;
 import net.chuzarski.moviebucket.ui.listing.ListingFragment;
-
-import java.util.concurrent.Executor;
+import net.chuzarski.moviebucket.ui.listing.ListingPreferencesFragment;
 
 import javax.inject.Singleton;
 
@@ -22,16 +17,17 @@ import dagger.Component;
         ExecutorModule.class,
         ViewModelModule.class})
 @Singleton
-public interface AppComponent {
+public interface AppComponentInjector {
 
     @Component.Builder
     interface Builder {
         @BindsInstance
         Builder application(Application application);
-        AppComponent build();
+        AppComponentInjector build();
     }
 
     void inject(ListingFragment fragment);
+    void inject(ListingPreferencesFragment fragment);
 
     ViewModelProvider.Factory appViewModelFactory();
 }

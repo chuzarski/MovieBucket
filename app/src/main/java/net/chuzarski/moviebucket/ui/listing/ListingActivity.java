@@ -5,82 +5,90 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.support.v4.widget.DrawerLayout.SimpleDrawerListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.StaticValues;
 import net.chuzarski.moviebucket.ui.detail.DetailActivity;
+import net.chuzarski.moviebucket.ui.listing.ListingFragment.ListingFragmentInteractor;
+import net.chuzarski.moviebucket.ui.listing.ListingPreferencesFragment.ListingPreferencesInteractor;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-public class ListingActivity extends AppCompatActivity implements ListingFragment.ListingFragmentInteractor {
+public class ListingActivity extends AppCompatActivity implements ListingFragmentInteractor, ListingPreferencesInteractor {
 
     // constants
-    public static final String FRAGMENT_KEY_CURRENT = "FRAG_CURRENT";
-    public static final String MOVIE_FEED_KEY = "MOVIE_FEED_TYPE";
+    public static final String FRAGMENT_STATE_KEY_NETWORK_LISTING = "netlist";
+    public static final String FRAGMENT_STATE_KEY_LOCAL_LISTING = "locallist";
+    public static final String FRAGMENT_STATE_KEY_LISTING_PREF = "pref";
 
-    // UI references
-    ListingFragment fragment;
+    // UI Fragments
+    ListingFragment networkListingFragment;
+    ListingFragment localListingFragment;
+    ListingPreferencesFragment listingPreferencesFragment;
 
-    @BindView(R.id.listing_activity_feed_toolbar)
-    Toolbar feedUIToolbar;
+    @BindView(R.id.listing_activity_toolbar)
+    Toolbar activityToolbar;
 
-    Toolbar localUIToolbar;
-    @BindView(R.id.listing_feed_spinner)
-    Spinner movieFeedSpinner;
-
-    // state
-    private int movieFeedType;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
 
     ///////////////////////////////////////////////////////////////////////////
-    // Activity callbacks
+    // Listeners
+    ///////////////////////////////////////////////////////////////////////////
+    DrawerListener drawerListener = new SimpleDrawerListener() {
+        @Override
+        public void onDrawerOpened(@NonNull View drawerView) {
+            // so when the drawer is open, we can close it naturally ;)
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+
+        @Override
+        public void onDrawerClosed(@NonNull View drawerView) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Lifecycle callbacks
     ///////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listing);
-
         initFragmentAutoInjection();
 
         ButterKnife.bind(this);
-        // todo UI setUI methods are going to be handling fragment management in the future
         if(savedInstanceState == null) {
+
+            // fresh ui
             initUI();
-            // todo temp
-            setUIFeedListing();
+
+            // fragments
+            createAllFragments();
+            attachFragmentsToFrames();
+
         } else {
-            fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_KEY_CURRENT);
-            movieFeedType = savedInstanceState.getInt(MOVIE_FEED_KEY);
+            restoreFragmentReferences(savedInstanceState);
         }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        movieFeedSpinner.setOnItemSelectedListener(feedSelectionListener);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
-        getSupportFragmentManager().putFragment(outState, FRAGMENT_KEY_CURRENT, fragment);
-        outState.putInt(MOVIE_FEED_KEY, movieFeedType);
+        saveFragmentReferences(outState);
         super.onSaveInstanceState(outState);
     }
 
@@ -94,10 +102,13 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                fragment.refreshList();
+                networkListingFragment.refreshList();
                 return true;
             case R.id.action_search:
                 onSearchRequested();
+                return true;
+            case R.id.action_sort:
+                drawerLayout.openDrawer(Gravity.END);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -105,43 +116,22 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Internal setup functions
+    // UI Functions
     ///////////////////////////////////////////////////////////////////////////
-    /**
-     * This method decides what kind of listing this activity will be
-     * i.e. is the activity being opened on fresh start, saved movies, search?
-     */
-    ///////////////////////////////////////////////////////////////////////////
-    // UI Setup functions
-    ///////////////////////////////////////////////////////////////////////////
-    private void setUIFeedListing() {
-        setSupportActionBar(feedUIToolbar);
-        getSupportActionBar().setTitle("");
-        fragment = ListingFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
-    }
-
-    private void setUILocalListing() {
-        BucketApplication app;
-        app = (BucketApplication) getApplication();
-
-        setSupportActionBar(localUIToolbar);
-        getSupportActionBar().setTitle(getResources()
-                .getString(R.string.listing_activity_local_listing_toolbar_label));
-
-        fragment = ListingFragment.newInstance();
-        app.getAppComponent().inject(fragment);
-        getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
-    }
 
     private void initUI() {
-        initFeedSpinner();
-    }
+        // deal with toolbar
+        setSupportActionBar(activityToolbar);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("");
+        } else {
+            Timber.w("Action bar is null? Strange behavior might occur");
+        }
 
-    private void initFeedSpinner() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.movie_feeds, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        movieFeedSpinner.setAdapter(adapter);
+        // deal with nav drawer
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        drawerLayout.addDrawerListener(drawerListener);
+
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -151,37 +141,47 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         BucketApplication app;
         app = (BucketApplication) getApplication();
 
-        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentLifecycleCallbacks() {
             @Override
             public void onFragmentAttached(FragmentManager fm, Fragment f, Context context) {
                 super.onFragmentAttached(fm, f, context);
                 if(f instanceof ListingFragment) {
-                    app.getAppComponent().inject((ListingFragment) f);
+                    app.getAppComponentInjector().inject((ListingFragment) f);
+                } else if (f instanceof ListingPreferencesFragment) {
+                    app.getAppComponentInjector().inject((ListingPreferencesFragment) f);
                 }
             }
         }, false);
     }
-    ///////////////////////////////////////////////////////////////////////////
-    // UI Listeners
-    ///////////////////////////////////////////////////////////////////////////
 
-    OnItemSelectedListener feedSelectionListener = new OnItemSelectedListener() {
-        private boolean allowSelections = false;
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            movieFeedType = position;
-            if(allowSelections) {
-                Timber.d("Selection selected!");
-            } else {
-                allowSelections = true;
-            }
-        }
+    private void createAllFragments() {
+        networkListingFragment = new ListingFragment();
+        listingPreferencesFragment = new ListingPreferencesFragment();
+    }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
+    private void attachFragmentsToFrames() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.drawer_listing_preferences, listingPreferencesFragment)
+                .add(R.id.listing_activity_network_listing_frame, networkListingFragment)
+                .commit();
 
-        }
-    };
+    }
+
+    private void saveFragmentReferences(Bundle outState) {
+        getSupportFragmentManager().putFragment(outState,
+                FRAGMENT_STATE_KEY_NETWORK_LISTING, networkListingFragment);
+        getSupportFragmentManager().putFragment(outState,
+                FRAGMENT_STATE_KEY_LISTING_PREF, listingPreferencesFragment);
+    }
+    private void restoreFragmentReferences(Bundle savedInstanceState) {
+        networkListingFragment = (ListingFragment) getSupportFragmentManager()
+                .getFragment(savedInstanceState, FRAGMENT_STATE_KEY_NETWORK_LISTING);
+        listingPreferencesFragment = (ListingPreferencesFragment) getSupportFragmentManager()
+                .getFragment(savedInstanceState, FRAGMENT_STATE_KEY_LISTING_PREF);
+    }
+
+
 
     ///////////////////////////////////////////////////////////////////////////
     // ListingFragmentInteractor interface implementation
@@ -203,5 +203,12 @@ public class ListingActivity extends AppCompatActivity implements ListingFragmen
         Intent detailActivityIntent = new Intent(this, DetailActivity.class);
         detailActivityIntent.putExtra(StaticValues.BUNDLE_ATTR_MOVIE_ID, id);
         startActivity(detailActivityIntent);
+    }
+    ///////////////////////////////////////////////////////////////////////////
+    // ListingPreferencesInteractor implementation
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void closePreferences() {
+        drawerLayout.closeDrawer(Gravity.END);
     }
 }

@@ -1,9 +1,5 @@
 package net.chuzarski.moviebucket.common;
 
-/**
- * Created by cody on 3/26/18.
- */
-
 import net.chuzarski.moviebucket.models.ServiceConfigurationModel;
 
 import net.chuzarski.moviebucket.models.ServiceConfigurationModel.ImagesConfigurationModel;

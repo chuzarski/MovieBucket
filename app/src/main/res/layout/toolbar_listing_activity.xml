@@ -2,5 +2,8 @@
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/listing_activity_local_toolbar"
-    style="@style/listing_toolbar_style_common"/>
+    android:id="@+id/listing_activity_toolbar"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    style="@style/listing_toolbar_style_common">
+
+</android.support.v7.widget.Toolbar>

@@ -30,4 +30,6 @@
     <!-- List item sizes -->
     <dimen name="listing_item_poster_width">113dp</dimen>
     <dimen name="listing_item_card_height">150dp</dimen>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
 </resources>

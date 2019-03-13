@@ -1,7 +1,8 @@
 package net.chuzarski.moviebucket.common;
 
 /**
- * Created by cody on 3/21/18.
+ * Deprecated
+ * This will be deprecated in favor of integer values
  */
 
 public enum LoadState {

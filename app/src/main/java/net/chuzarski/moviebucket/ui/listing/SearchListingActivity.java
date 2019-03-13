@@ -28,7 +28,7 @@ public class SearchListingActivity extends AppCompatActivity implements ListingF
 
         if (savedInstanceState == null) {
             fragment = createSearchListingFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.activity_movie_roll_fragment_frame, fragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.listing_activity_network_listing_frame, fragment).commit();
         } else {
             fragment = (ListingFragment) getSupportFragmentManager().getFragment(savedInstanceState, KEY_FRAGMENT);
         }
@@ -55,8 +55,9 @@ public class SearchListingActivity extends AppCompatActivity implements ListingF
         Bundle fragmentArgs = new Bundle();
         String searchQuery = handleSearchIntent();
 
-        fragmentArgs.putInt(ListingFragment.KEY_FRAGMENT_MODE,
-                ListingFragment.MODE_FLAG_SEARCH_LISTING);
+        // todo fix search networkListingFragment?
+//        fragmentArgs.putInt(ListingFragment.KEY_FRAGMENT_MODE,
+//                ListingFragment.MODE_FLAG_SEARCH_LISTING);
         fragmentArgs.putString(ListingFragment.KEY_SEARCH_QUERY, searchQuery);
         return ListingFragment.newInstance(fragmentArgs);
     }

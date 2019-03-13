@@ -8,10 +8,6 @@ import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 
-/**
- * Created by cody on 3/27/18.
- */
-
 @Entity
 public class ListingItemModel {
 

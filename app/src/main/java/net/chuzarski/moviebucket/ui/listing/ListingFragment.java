@@ -1,7 +1,6 @@
 package net.chuzarski.moviebucket.ui.listing;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -19,11 +18,9 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 
-import net.chuzarski.moviebucket.BucketApplication;
 import net.chuzarski.moviebucket.R;
 import net.chuzarski.moviebucket.common.AppViewModelFactory;
 import net.chuzarski.moviebucket.common.StaticValues;
-import net.chuzarski.moviebucket.di.InjectableFragment;
 
 
 import javax.inject.Inject;
@@ -34,7 +31,7 @@ import butterknife.Unbinder;
 import timber.log.Timber;
 
 public class
-ListingFragment extends Fragment implements ListingItemInteractor, InjectableFragment {
+ListingFragment extends Fragment implements ListingItemInteractor {
 
     private ListingFragmentInteractor hostInteractor;
     private Unbinder unbinder;
@@ -54,10 +51,6 @@ ListingFragment extends Fragment implements ListingItemInteractor, InjectableFra
     public static final String KEY_LIST_POSITION = "LIST_POSITION";
     public static final String KEY_FRAGMENT_MODE = "MODE";
     public static final String KEY_SEARCH_QUERY = "QUERY";
-    // Flags
-    public static final int MODE_FLAG_INTERNET_LISTING = 1;
-    public static final int MODE_FLAG_SEARCH_LISTING = 2;
-    public static final int MODE_FLAG_LOCAL_LISTING = 3;
 
 
     public ListingFragment() {
@@ -69,8 +62,8 @@ ListingFragment extends Fragment implements ListingItemInteractor, InjectableFra
     }
 
     /**
-     * Creates this fragment using arguments
-     * if null is passed for the bundle, the fragment will setup the same way if newInstance() is called
+     * Creates this networkListingFragment using arguments
+     * if null is passed for the bundle, the networkListingFragment will setup the same way if newInstance() is called
      * @param args
      * @return
      */
@@ -106,14 +99,20 @@ ListingFragment extends Fragment implements ListingItemInteractor, InjectableFra
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_listing, container, false);
+        return inflater.inflate(R.layout.fragment_listing, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
+
+
         configureRecycler();
         if (savedInstanceState != null) {
             movieRecyclerView.getLayoutManager()
                     .onRestoreInstanceState(savedInstanceState.getParcelable(KEY_LIST_POSITION));
         }
-        return view;
     }
 
     @Override
@@ -153,21 +152,12 @@ ListingFragment extends Fragment implements ListingItemInteractor, InjectableFra
         hostInteractor = null;
     }
     ///////////////////////////////////////////////////////////////////////////
-    // Internal
-    ///////////////////////////////////////////////////////////////////////////
-    public int getListingMode() {
-        if (getArguments() != null) {
-            return getArguments().getInt(KEY_FRAGMENT_MODE, MODE_FLAG_INTERNET_LISTING);
-        }
-        return MODE_FLAG_INTERNET_LISTING;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
     // UI Configuration
     ///////////////////////////////////////////////////////////////////////////
     private void configureRecycler() {
         adapter = new ListingPagedListAdapter(this, glideRequestManager);
         movieRecyclerView.setAdapter(adapter);
+        movieRecyclerView.setItemAnimator(null);
         configureRecyclerLayout();
     }
 
@@ -221,7 +211,7 @@ ListingFragment extends Fragment implements ListingItemInteractor, InjectableFra
     }
 
     public interface ListingFragmentInteractor {
-        // TODO add interface for fragment interaction
+        // TODO add interface for networkListingFragment interaction
         void disableReloadAction();
         void enabledReloadAction();
 

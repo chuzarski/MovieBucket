@@ -8,6 +8,20 @@
     <!-- General Strings -->
     <string name="movie_bucket_add_action_string">Add to Movie Bucket</string>
 
+    <!-- common -->
+    <string name="common_done">Done</string>
+    <!-- sorting filter labels -->
+    <string name="sort_upcoming">Upcoming</string>
+    <string name="sort_popular">Popular</string>
+    <string name="sort_top_rated">Top Rated</string>
+    <string name="sort_in_theaters">In Theaters</string>
+
+    <!-- ListingPreferencesFragment Strings -->
+    <string name="listingpref_sortby">Sort By</string>
+    <string name="listingpref_year">Year</string>
+    <string name="listingpref_genre">Genre</string>
+    <string name="listingpref_rating">Rating</string>
+
     <!-- DetailFragment Strings -->
     <string name="movie_detail_trailer_heading_string">Trailers</string>
     <string name="movie_detail_series_heading_string">Series</string>
@@ -18,12 +32,7 @@
 
     <!--- MENUS -->
     <!-- Listing Common-->
-    <string name="listing_nav_drawer_item_upcoming_string">Upcoming</string>
-    <string name="action_listing_opts">Listing</string>
-    <string name="action_set_listing_upcoming">Upcoming</string>
-    <string name="action_set_listing_top_rated">Top Rated</string>
-    <string name="action_set_listing_popular">Popular</string>
-    <string name="action_set_listing_now_playing">Now Playing</string>
+    <string name="action_listing_sort">Sort</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_search">Search</string>
     <string name="listing_item_action_open">Open</string>
@@ -41,4 +50,5 @@
 
     <!-- Searching -->
     <string name="search_hint">Movie Title</string>
+    <string name="common_any">Any</string>
 </resources>
